@@ -1,0 +1,7 @@
+{
+  "name": "babylog",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
