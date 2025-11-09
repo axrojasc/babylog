@@ -1,20 +1,64 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+<ion-content class="home-bg">
+  <div class="header">
+    <h2>👶 Bienvenido a BabyLog</h2>
+    <p>Hola, {{ babyName }} 💕</p>
   </div>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12">
+        <ion-card class="baby-card">
+          <img src="assets/images/bb1.jpg" alt="Bebé"/>
+          <ion-card-content>
+            <h3>Crecimiento general</h3>
+            <p>Altura, peso y desarrollo</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6">
+        <ion-card class="stat-card sleep">
+          <ion-card-header>
+            <ion-card-title>💤 Sueño</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p>Promedio diario: 9h</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6">
+        <ion-card class="stat-card vacunas" (click)="goToVacunas()">
+          <ion-card-header>
+            <ion-card-title>💉 Vacunas</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p>Próxima: Pentavalente - 12 Nov</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6">
+        <ion-card class="stat-card controles" (click)="goToControles()">
+          <ion-card-header>
+            <ion-card-title>📅 Controles</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p>Próximo control: 25 Nov</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6">
+        <ion-card class="stat-card peso">
+          <ion-card-header>
+            <ion-card-title>⚖️ Peso</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p>7.8 kg</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

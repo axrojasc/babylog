@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -7,7 +8,15 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class HomePage {
+  babyName = 'Aly';
+  
+  constructor(private router: Router) {}
 
-  constructor() {}
+  goToVacunas() {
+    this.router.navigate(['/vacunas']);
+  }
 
+  goToControles() {
+    this.router.navigate(['/controles']);
+  }
 }
