@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Alimentación</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="abrirFormulario()">Añadir comida</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h2>Historial de comidas</h2>
+
+  <ion-list *ngIf="comidas.length > 0; else sinComidas">
+    <ion-item *ngFor="let comida of comidas">
+      <ion-label>
+        <h3>{{ comida.nombre }}</h3>
+        <p><strong>Fecha:</strong> {{ comida.fecha | date: 'shortDate' }} | <strong>Hora:</strong> {{ comida.hora }}</p>
+        <p><strong>Info nutricional:</strong> {{ comida.infoNutricional }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ng-template #sinComidas>
+    <ion-text color="medium">
+      <p>No hay comidas registradas aún.</p>
+    </ion-text>
+  </ng-template>
+
+  <!-- Modal para añadir comida -->
+  <ion-modal [isOpen]="mostrarFormulario" (didDismiss)="cerrarFormulario()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Nueva comida</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarFormulario()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <ion-item>
+          <ion-label position="floating">Nombre del alimento</ion-label>
+          <ion-input [(ngModel)]="nuevaComida.nombre"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Fecha</ion-label>
+          <ion-datetime [(ngModel)]="nuevaComida.fecha"></ion-datetime>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Hora</ion-label>
+          <ion-input type="time" [(ngModel)]="nuevaComida.hora"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Información nutricional</ion-label>
+          <ion-textarea [(ngModel)]="nuevaComida.infoNutricional"></ion-textarea>
+        </ion-item>
+
+        <ion-button expand="full" (click)="guardarComida()">Guardar</ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

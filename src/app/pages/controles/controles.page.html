@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Controles</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="abrirFormulario()">Añadir Control</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-searchbar placeholder="Buscar control..." [(ngModel)]="busqueda"></ion-searchbar>
+
+  <div class="grid">
+    <div>
+      <h2>Controles realizados</h2>
+      <ion-list>
+        <ion-item *ngFor="let control of controlesRealizados">
+          {{ control.nombre }}
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <div>
+      <h2>Controles pendientes</h2>
+      <ion-list>
+        <ion-item *ngFor="let control of controlesPendientes">
+          {{ control.nombre }}
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+
+  <!-- Modal del formulario -->
+  <ion-modal [isOpen]="mostrarFormulario" (didDismiss)="cerrarFormulario()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Nuevo Control</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarFormulario()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-item>
+          <ion-label position="floating">Nombre del control</ion-label>
+          <ion-input [(ngModel)]="nuevoControl.nombre"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Fecha</ion-label>
+          <ion-datetime [(ngModel)]="nuevoControl.fecha"></ion-datetime>
+        </ion-item>
+
+        <ion-button expand="full" (click)="guardarControl()">Guardar</ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>
