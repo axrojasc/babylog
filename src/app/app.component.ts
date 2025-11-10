@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 @Component({
@@ -8,8 +8,9 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
   standalone: false,
 })
 export class AppComponent {
+  private readonly firestore = inject(AngularFirestore);
 
-  constructor(private firestore: AngularFirestore) {
+  constructor() {
     console.log('AppComponent cargado — verificando Firebase...');
     this.checkFirebaseConnection();
   }

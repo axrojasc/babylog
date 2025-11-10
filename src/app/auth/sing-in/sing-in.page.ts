@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-sing-in',
@@ -7,11 +7,6 @@ import { Component, OnInit } from '@angular/core';
   standalone: false,
   
 })
-export class SingInPage implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
+export class SingInPage {
 
 }
