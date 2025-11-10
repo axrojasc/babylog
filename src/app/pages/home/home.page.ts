@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -9,8 +9,7 @@ import { Router } from '@angular/router';
 })
 export class HomePage {
   babyName = 'Aly';
-  
-  constructor(private router: Router) {}
+  private readonly router = inject(Router);
 
   goToVacunas() {
     this.router.navigate(['/vacunas']);

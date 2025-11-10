@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
 :root {
-  --bg-beige: #fff9f5;
+  --bg-beige: #feb8ef;
   --pink: #d6336c;
   --green: #63d6c1;
   --text: #333;
@@ -16,7 +16,21 @@ html, body, ion-app, ion-content {
 ion-card {
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  background: #fff;
+  background: #7ce9fc;
   margin: 12px;
   padding: 8px;
+}
+
+ion-toolbar {
+  --background: #ffffff;
+  --border-color: #FFC5D3;
+  --border-style: solid;
+  --border-width: 4px;
+  --color: #d6336c;
+  --min-height: 56px;
+  --opacity: 2;
+  --padding-bottom: 4px;
+  --padding-end: 4px;
+  --padding-start: 4px;
+  --padding-top: 4px;
 }
