@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Sueño</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- ✅ Botón visible y verde -->
+  <div class="ion-text-end ion-margin-bottom">
+    <ion-button color="success" (click)="alternarFormulario()">
+      Añadir Sueño
+    </ion-button>
+  </div>
+
+  <!-- 💤 Formulario de ingreso -->
+  <ion-card *ngIf="mostrarFormulario" class="ion-margin-bottom">
+    <ion-card-header>
+      <ion-card-title>Registrar horas de sueño</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Hora en que se durmió</ion-label>
+        <ion-input type="time" [(ngModel)]="horaDormir"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Hora en que despertó</ion-label>
+        <ion-input type="time" [(ngModel)]="horaDespertar"></ion-input>
+      </ion-item>
+
+      <ion-button expand="block" color="success" class="ion-margin-top" (click)="confirmarSueno()">
+        Confirmar
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- 📊 Gráfico -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Gráfico de Horas de Sueño</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <canvas #sleepChart></canvas>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
