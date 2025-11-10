@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Vacunas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="addVacuna()">
+        <ion-icon name="add-circle-outline"></ion-icon>
+        Añadir vacuna
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-searchbar placeholder="Buscar vacuna..."></ion-searchbar>
+
+  <ion-grid>
+    <ion-row>
+      <!-- Columna 1: Realizadas -->
+      <ion-col size="6">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Vacunas Realizadas</ion-card-title>
+          </ion-card-header>
+          <ion-list>
+            <ion-item *ngFor="let v of realizadas">
+              <ion-label>
+                <h2>{{ v.nombre }}</h2>
+                <p>{{ v.fecha }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-card>
+      </ion-col>
+
+      <!-- Columna 2: Pendientes -->
+      <ion-col size="6">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Vacunas Pendientes</ion-card-title>
+          </ion-card-header>
+          <ion-list>
+            <ion-item *ngFor="let v of pendientes">
+              <ion-label>
+                <h2>{{ v.nombre }}</h2>
+                <p>{{ v.fecha }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

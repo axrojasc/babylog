@@ -1,0 +1,11 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+h2 {
+  text-align: center;
+  margin-top: 10px;
+  color: var(--ion-color-primary);
+}
