@@ -21,7 +21,15 @@ const routes: Routes = [
     path: 'controles',
     loadChildren: () =>
       import('./pages/controles/controles.module').then(m => m.ControlesPageModule)
+  },  {
+    path: 'alimentacion',
+    loadChildren: () => import('./pages/alimentacion/alimentacion.module').then( m => m.AlimentacionPageModule)
+  },
+  {
+    path: 'sueno',
+    loadChildren: () => import('./pages/sueno/sueno.module').then( m => m.SuenoPageModule)
   }
+
 ];
 
 @NgModule({
