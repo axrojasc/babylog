@@ -28,6 +28,10 @@ const routes: Routes = [
   {
     path: 'sueno',
     loadChildren: () => import('./pages/sueno/sueno.module').then( m => m.SuenoPageModule)
+  },
+  {
+    path: 'crecimiento',
+    loadChildren: () => import('./pages/crecimiento/crecimiento.module').then( m => m.CrecimientoPageModule)
   }
 
 ];
