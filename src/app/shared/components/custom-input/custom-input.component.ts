@@ -7,7 +7,7 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['./custom-input.component.scss'],
   standalone: false
 })
-export class CustomInputComponent { 
+export class CustomInputComponent {
 
   @Input() control!: FormControl;
   @Input() type!: string;
@@ -19,7 +19,7 @@ export class CustomInputComponent {
   hide: boolean = true;
 
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit() {
     if (this.type == 'password') this.isPassword = true;

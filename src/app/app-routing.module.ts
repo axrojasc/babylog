@@ -38,7 +38,18 @@ const routes: Routes = [
     path: 'sueno',
     loadChildren: () => import('./pages/sueno/sueno.module').then( m => m.SuenoPageModule)
   
+  },
+{
+    path: 'register',
+    loadChildren: () => import('./auth/register/register.module').then( m => m.RegisterPageModule)
+  },
+{
+    
+    path: 'forgot-password',
+    loadChildren: () => import('./auth/forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule)
 },
+
+
 ];
 
 @NgModule({

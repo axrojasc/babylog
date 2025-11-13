@@ -15,13 +15,17 @@
 @import "@ionic/angular/css/flex-utils.css";
 
 :root {
+
+  --ion-color-primary: #d6336c;
   --bg-beige: #feb8ef;
   --pink: #d6336c;
   --green: #63d6c1;
   --text: #333;
 }
 
-html, body, ion-app, ion-content {
+
+
+ion-app, ion-content {
   font-family: 'Poppins', sans-serif;
   background: var(--bg-beige);
   color: var(--text);
@@ -36,6 +40,7 @@ ion-card {
 }
 
 ion-toolbar {
+  
   --background: #ffffff;
   --border-color: #FFC5D3;
   --border-style: solid;

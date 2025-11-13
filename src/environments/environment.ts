@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+
   firebaseConfig: {
     apiKey: "AIzaSyC4XEt_XpF391yEuA2yY2cAmu0Cc-XPSZA",
     authDomain: "babylog-cb971.firebaseapp.com",
