@@ -24,35 +24,33 @@ const routes: Routes = [
   },
   {
     path: 'alimentacion',
-    loadChildren: () => import('./pages/alimentacion/alimentacion.module').then( m => m.AlimentacionPageModule)
+    loadChildren: () => import('./pages/alimentacion/alimentacion.module').then(m => m.AlimentacionPageModule)
   },
   {
     path: 'auth',
-    loadChildren: () => import('./auth/auth.module').then( m => m.AuthPageModule)
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthPageModule)
   },
   {
     path: 'profile',
-    loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule)
+    loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfilePageModule)
   },
-{
+  {
     path: 'sueno',
-    loadChildren: () => import('./pages/sueno/sueno.module').then( m => m.SuenoPageModule)
-  
-  },
-{
-    path: 'register',
-    loadChildren: () => import('./auth/register/register.module').then( m => m.RegisterPageModule)
-  },
-{
-    
-    path: 'forgot-password',
-    loadChildren: () => import('./auth/forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule)
-},
+    loadChildren: () => import('./pages/sueno/sueno.module').then(m => m.SuenoPageModule)
 
   },
   {
+    path: 'register',
+    loadChildren: () => import('./auth/register/register.module').then(m => m.RegisterPageModule)
+  },
+  {
+
+    path: 'forgot-password',
+    loadChildren: () => import('./auth/forgot-password/forgot-password.module').then(m => m.ForgotPasswordPageModule)
+  },
+  {
     path: 'crecimiento',
-    loadChildren: () => import('./pages/crecimiento/crecimiento.module').then( m => m.CrecimientoPageModule)
+    loadChildren: () => import('./pages/crecimiento/crecimiento.module').then(m => m.CrecimientoPageModule)
   }
 
 ];
@@ -61,4 +59,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
