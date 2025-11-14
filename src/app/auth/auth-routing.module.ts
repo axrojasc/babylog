@@ -8,18 +8,7 @@ const routes: Routes = [
     path: '',
     component: AuthPage
   },
-  {
-    path: 'sing-in',
-    loadChildren: () => import('./sing-in/sing-in.module').then( m => m.SingInPageModule)
-  },
-  {
-    path: 'forgot-password',
-    loadChildren: () => import('./forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule)
-  },
-  {
-    path: 'register',
-    loadChildren: () => import('./register/register.module').then( m => m.RegisterPageModule)
-  }
+
 ];
 
 @NgModule({
