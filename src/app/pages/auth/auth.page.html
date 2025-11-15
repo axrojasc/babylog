@@ -27,7 +27,7 @@
 
                         <p (click)="goToForgotPassword()" magin-top="0">¿Olvidaste tu contraseña?</p>
 
-                        <ion-button expand="block" mode="ios" class="submit" [disabled]="form.invalid">
+                        <ion-button expand="block" mode="ios" class="submit" (click)="goToHome()" [disabled]="form.invalid">
                                 Ingresar
                                 <ion-icon slot="end" name="log-in-outline"></ion-icon>
                         </ion-button>

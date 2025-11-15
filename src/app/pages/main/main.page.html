@@ -1,0 +1,17 @@
+<ion-menu contentId="menu-content" menuId="menu-content" side="start" type="overlay">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Awesome avocado menu</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-menu-toggle autohide="false" *ngFor="let p of pages">
+      <ion-item [routerLink]="p.url" routerDirection="root" detail>
+        <ion-icon slot="start" [name]="p.icon"></ion-icon>
+        <ion-label>{{ p.title }}</ion-label>
+      </ion-item>
+    </ion-menu-toggle>
+  </ion-content>
+</ion-menu>
+
+<ion-router-outlet id="menu-content"></ion-router-outlet>

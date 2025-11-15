@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FirebaseService } from '../services/firebase.service';
-import { User } from '../models/user.model';
-import { UtilsService } from '../services/utils.service';
+import { FirebaseService } from '../../services/firebase.service';
+import { User } from '../../models/user.model';
+import { UtilsService } from '../../services/utils.service';
 
 @Component({
   selector: 'app-auth',
@@ -21,6 +21,10 @@ export class AuthPage {
 
   goToRegister() {
     this.router.navigate(['/register']);
+  }
+
+  goToHome() {
+    this.router.navigate(['/main/home']);
   }
 
   goToForgotPassword() {

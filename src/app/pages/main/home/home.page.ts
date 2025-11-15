@@ -12,18 +12,18 @@ export class HomePage {
   private readonly router = inject(Router);
 
   goToSueno() {
-    this.router.navigate(['/sueno']);
+    this.router.navigate(['/main/sueno']);
   }
 
   goToVacunas() {
-    this.router.navigate(['/vacunas']);
+    this.router.navigate(['/main/vacunas']);
   }
 
   goToControles() {
-    this.router.navigate(['/controles']);
+    this.router.navigate(['/main/controles']);
   }
 
   goToPeso() {
-    this.router.navigate(['/alimentacion']);
+    this.router.navigate(['/main/alimentacion']);
   }
 }
