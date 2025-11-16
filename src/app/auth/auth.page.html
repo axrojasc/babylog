@@ -9,7 +9,7 @@
 
                         <app-logo></app-logo>
 
-                        
+
                         <app-custom-input autocomplete="email" icon="mail-outline" [control]="form.controls.email"
                                 type="email" label="Correo"></app-custom-input>
 
@@ -27,16 +27,19 @@
 
                         <p (click)="goToForgotPassword()" magin-top="0">¿Olvidaste tu contraseña?</p>
 
+                        <p class="ion-margin-top registro-texto" (click)="goToRegister()">
+                                Registrate
+                                <ion-icon slot="end" name="person-add-outline"></ion-icon>
+                        </p>
+
+
                         <ion-button expand="block" mode="ios" class="submit" [disabled]="form.invalid">
                                 Ingresar
                                 <ion-icon slot="end" name="log-in-outline"></ion-icon>
                         </ion-button>
 
-                        <ion-button class="ion-margin-top" (click)="goToRegister()" expand="block" mode="ios"
-                                filt="outline">
-                                Registrate
-                                <ion-icon slot="end" name="person-add-outline"></ion-icon>
-                        </ion-button>
+
+
 
 
 
