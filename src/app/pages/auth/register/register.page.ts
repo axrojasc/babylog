@@ -19,17 +19,6 @@ export class RegisterPage {
     name: new FormControl('', [Validators.required, Validators.minLength(4)]),
   })
 
-  // ---------- Rutas ----------
-
-  private readonly router = inject(Router);
-  goToRegister() {
-    this.router.navigate(['/register']);
-  }
-  goToForgotPassword() {
-    this.router.navigate(['/forgot-password']);
-  }
-
-
   firebaseSvc = inject(FirebaseService);
   utilsSvc = inject(UtilsService)
 

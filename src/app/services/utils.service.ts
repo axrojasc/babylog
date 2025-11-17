@@ -11,7 +11,7 @@ export class UtilsService {
 
   // ---------- Loading ----------
   loading() {
-    return this.loadingCtrl.create({ spinner: 'bubbles'})
+    return this.loadingCtrl.create({ spinner: 'crescent'})
   }
 
   // ---------- Toast ----------

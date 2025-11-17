@@ -17,19 +17,6 @@ export class AuthPage {
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required])
   })
-  private readonly router = inject(Router);
-
-  goToRegister() {
-    this.router.navigate(['/register']);
-  }
-
-  goToHome() {
-    this.router.navigate(['/main/home']);
-  }
-
-  goToForgotPassword() {
-    this.router.navigate(['/forgot-password']);
-  }
 
   firebaseSvc = inject(FirebaseService);
   utilsSvc = inject(UtilsService)
@@ -45,7 +32,7 @@ export class AuthPage {
 
       this.firebaseSvc.signIn(this.form.value as User).then(res => {
 
-          console.log(res);
+        console.log(res);
 
       }).catch(error => {
         console.log(error);
@@ -61,7 +48,7 @@ export class AuthPage {
       }).finally(() => {
         loading.dismiss();
       })
-    
+
     }
 
   }
