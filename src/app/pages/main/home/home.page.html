@@ -1,7 +1,7 @@
 <app-header title="Inicio"></app-header>
 <ion-content class="home-bg">
   <div class="header">
-    <h2>👶 Bienvenido a BabyLog</h2>
+    <h2>Bienvenido a BabyLog</h2>
     <p>Hola, {{ babyName }} 💕</p>
   </div>
 
@@ -18,7 +18,7 @@
       </ion-col>
 
       <ion-col size="6">
-        <ion-card class="stat-card sleep">
+        <ion-card class="stat-card sleep" (click)="goToSueno()">
           <ion-card-header>
             <ion-card-title>💤 Sueño</ion-card-title>
           </ion-card-header>
@@ -51,7 +51,7 @@
       </ion-col>
 
       <ion-col size="6">
-        <ion-card class="stat-card peso">
+        <ion-card class="stat-card peso" (click)="goToPeso()">
           <ion-card-header>
             <ion-card-title>⚖️ Peso</ion-card-title>
           </ion-card-header>

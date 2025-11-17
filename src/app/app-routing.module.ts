@@ -8,56 +8,28 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'home',
-    loadChildren: () =>
-      import('./pages/home/home.module').then(m => m.HomePageModule)
-  },
-  {
-    path: 'vacunas',
-    loadChildren: () =>
-      import('./pages/vacunas/vacunas.module').then(m => m.VacunasPageModule)
-  },
-  {
-    path: 'controles',
-    loadChildren: () =>
-      import('./pages/controles/controles.module').then(m => m.ControlesPageModule)
-  },
-  {
-    path: 'alimentacion',
-    loadChildren: () => import('./pages/alimentacion/alimentacion.module').then( m => m.AlimentacionPageModule)
+    path: 'main',
+    loadChildren: () => import('./pages/main/main.module').then(m => m.MainPageModule)
   },
   {
     path: 'auth',
-    loadChildren: () => import('./auth/auth.module').then( m => m.AuthPageModule)
+    loadChildren: () => import('./pages/auth/auth.module').then(m => m.AuthPageModule)
   },
   {
-    path: 'profile',
-    loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule)
-  },
-{
-    path: 'sueno',
-    loadChildren: () => import('./pages/sueno/sueno.module').then( m => m.SuenoPageModule)
-  
-  },
-{
     path: 'register',
-    loadChildren: () => import('./auth/register/register.module').then( m => m.RegisterPageModule)
+
+
+    loadChildren: () => import('./pages/auth/register/register.module').then(m => m.RegisterPageModule)
   },
-{
-    
-    path: 'forgot-password',
-    loadChildren: () => import('./auth/forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule)
-},
-
   {
-    path: 'crecimiento',
-    loadChildren: () => import('./pages/crecimiento/crecimiento.module').then( m => m.CrecimientoPageModule)
-  }
 
+    path: 'forgot-password',
+    loadChildren: () => import('./pages/auth/forgot-password/forgot-password.module').then(m => m.ForgotPasswordPageModule)
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
