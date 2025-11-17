@@ -1,19 +1,12 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Vacunas</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="addVacuna()">
-        <ion-icon name="add-circle-outline"></ion-icon>
-        Añadir vacuna
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<app-header backButton="/main/home" title="Registro de Vacunas"></app-header>
 
 <ion-content class="ion-padding">
 
   <ion-searchbar placeholder="Buscar vacuna..."></ion-searchbar>
-
+      <ion-button class="ion-margin-top" expand="block" (click)="addVacuna()">
+        <ion-icon name="add-circle-outline"></ion-icon>
+        Añadir vacuna
+      </ion-button>
   <ion-grid>
     <ion-row>
       <!-- Columna 1: Realizadas -->
