@@ -1,5 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { FirebaseService } from 'src/app/services/firebase.service';
+import { UtilsService } from 'src/app/services/utils.service';
 
 @Component({
   selector: 'app-home',
@@ -9,6 +11,10 @@ import { Router } from '@angular/router';
 })
 export class HomePage {
   babyName = 'Aly';
+
+  ngOnInit() {
+  }
+
   private readonly router = inject(Router);
 
   goToSueno() {

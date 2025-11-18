@@ -13,7 +13,7 @@
 
   <ion-footer class="ion-no-border safe-p-bottom">
     <ion-menu-toggle autohide="false">
-      <ion-item lines="none">
+      <ion-item (click)="signOut()" lines="none">
         <ion-icon slot="start" name="log-out-outline"></ion-icon>
         <ion-label>Cerrar sesión</ion-label>
       </ion-item>
