@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { AlimentacionPageRoutingModule } from './alimentacion-routing.module';
 
 import { AlimentacionPage } from './alimentacion.page';
+import { SharedModule } from 'src/app/shared/shared-module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    AlimentacionPageRoutingModule
+    AlimentacionPageRoutingModule,
+    SharedModule
   ],
   declarations: [AlimentacionPage]
 })

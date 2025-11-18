@@ -1,13 +1,12 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Alimentación</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="abrirFormulario()">Añadir comida</ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<app-header backButton="/main/home" title="Alimentacion" ></app-header>
+
 
 <ion-content class="ion-padding">
+
+        <ion-button class="ion-margin-top" expand="block" class="añadir comida" (click)="abrirFormulario()">
+            Añadir comida
+        </ion-button>
+
   <h2>Historial de comidas</h2>
 
   <ion-list *ngIf="comidas.length > 0; else sinComidas">

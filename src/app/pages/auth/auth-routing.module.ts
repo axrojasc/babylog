@@ -9,10 +9,10 @@ const routes: Routes = [
     component: AuthPage
   },
 
-];
+]
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AuthPageRoutingModule {}
+export class AuthPageRoutingModule {};

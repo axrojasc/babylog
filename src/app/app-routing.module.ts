@@ -9,7 +9,7 @@ const routes: Routes = [
   },
   {
     path: 'main',
-    loadChildren: () => import('./pages/main/main.module').then( m => m.MainPageModule)
+    loadChildren: () => import('./pages/main/main.module').then(m => m.MainPageModule)
   },
   {
     path: 'auth',
@@ -17,6 +17,8 @@ const routes: Routes = [
   },
   {
     path: 'register',
+
+
     loadChildren: () => import('./pages/auth/register/register.module').then(m => m.RegisterPageModule)
   },
   {
