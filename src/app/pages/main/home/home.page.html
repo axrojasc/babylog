@@ -2,14 +2,18 @@
 <ion-content class="home-bg">
   <div class="header">
     <h2>Bienvenido a BabyLog</h2>
-    <p>Hola, {{ babyName }} 💕</p>
   </div>
 
   <ion-grid>
     <ion-row>
       <ion-col size="12">
         <ion-card class="baby-card">
-          <img src="assets/images/bb1.jpg" alt="Bebé"/>
+          <ion-avatar>
+            <img [src]="image[0]?.image" (click)="addUpdateImage()"/>
+          </ion-avatar>
+          <br>
+          <br>
+          <ion-label class="name">Hola, {{ image[0]?.name }}</ion-label>
           <ion-card-content>
             <h3>Crecimiento general</h3>
             <p>Altura, peso y desarrollo</p>

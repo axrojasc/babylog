@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { User } from 'src/app/models/user.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
 
@@ -31,6 +32,10 @@ export class MainPage implements OnInit {
     this.router.events.subscribe((event: any) => {
       if(event?.url) this.currentPath = event.url;
     })
+  }
+
+  user(): User {
+    return this.utilsSvc.getFromLocalStorage('user');
   }
 
   // --- Cerrar sesión ---

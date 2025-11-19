@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
+import { UtilsService } from 'src/app/services/utils.service';
 
 @Component({
   selector: 'app-header',
@@ -9,5 +10,12 @@ import { Component, Input } from '@angular/core';
 export class HeaderComponent {
   @Input() title!: string;
   @Input() backButton!: string;
+  @Input() isModal: boolean;
+
+  utilsSvc = inject(UtilsService);
+
+  dismissModal() {
+    this.utilsSvc.dismissModal();
+  }
 
 }
