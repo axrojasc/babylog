@@ -1,5 +1,6 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Imagen } from 'src/app/models/image.model';
 import { User } from 'src/app/models/user.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
@@ -11,6 +12,8 @@ import { UtilsService } from 'src/app/services/utils.service';
   standalone: false,
 })
 export class AddUpdateImageComponent  implements OnInit {
+
+  @Input() image : Imagen
 
   form = new FormGroup({
     id: new FormControl(''),
@@ -26,6 +29,7 @@ export class AddUpdateImageComponent  implements OnInit {
   ngOnInit() {
 
     this.user = this.utilsSvc.getFromLocalStorage('user');
+    if (this.image) this.form.setValue(this.image);
   }
 
    // -----Tomar/Seleccionar imagen ---
@@ -34,8 +38,14 @@ export class AddUpdateImageComponent  implements OnInit {
     this.form.controls.image.setValue(dataUrl);
   }
 
-  async submit() {
+  submit() {
     if (this.form.valid) {
+      if(this.image) this.updateImage();
+      else this.createImage();
+    }
+  }
+
+  async createImage() {
 
       let path = `users/${this.user.uid}/image`
 
@@ -49,7 +59,7 @@ export class AddUpdateImageComponent  implements OnInit {
 
       delete this.form.value.id
 
-      this.firebaseSvc.updateDocument(path, this.form.value).then(async res => {
+      this.firebaseSvc.addDocument(path, this.form.value).then(async res => {
 
         this.utilsSvc.dismissModal({ success: true });
 
@@ -76,6 +86,51 @@ export class AddUpdateImageComponent  implements OnInit {
         loading.dismiss();
       })
     
-    }
+  }
+
+  async updateImage() {
+
+      let path = `users/${this.user.uid}/image/${this.image.id}`
+
+      const loading = await this.utilsSvc.loading();
+      await loading.present();
+
+      // --- si cambio la imagen, subir la nueva y obt la url ---
+      if(this.form.value.image !== this.image.image){
+      let dataUrl = this.form.value.image;
+      let imagePath = await this.firebaseSvc.getFilePath(this.image.image);
+      let imageUrl = await this.firebaseSvc.uploadImage(imagePath, dataUrl);
+      this.form.controls.image.setValue(imageUrl);
+      }
+
+      delete this.form.value.id
+
+      this.firebaseSvc.updateDocument(path, this.form.value).then(async res => {
+
+        this.utilsSvc.dismissModal({ success: true });
+
+        this.utilsSvc.presentToast({
+          message: 'Perfil actualizado exitosamente',
+          duration: 1500,
+          color: 'success',
+          position: 'middle',
+          icon: 'checkmark-circle-outline'
+        })
+
+      }).catch(error => {
+        console.log(error);
+
+        this.utilsSvc.presentToast({
+          message: error.message,
+          duration: 2500,
+          color: 'primary',
+          position: 'middle',
+          icon: 'alert-circle-outline'
+        })
+
+      }).finally(() => {
+        loading.dismiss();
+      })
+    
   }
 }
