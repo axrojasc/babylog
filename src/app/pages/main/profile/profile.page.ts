@@ -1,6 +1,4 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Imagen } from 'src/app/models/image.model';
 import { User } from 'src/app/models/user.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
@@ -9,65 +7,72 @@ import { UtilsService } from 'src/app/services/utils.service';
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
-  standalone: false, 
-  
+  standalone: false,
 })
 export class ProfilePage implements OnInit {
 
   firebaseSvc = inject(FirebaseService);
-  utilsSvc = inject(UtilsService)
+  utilsSvc = inject(UtilsService);
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   user(): User {
     return this.utilsSvc.getFromLocalStorage('user');
   }
 
-
-  // -----Tomar/Seleccionar imagen ---
+  // --- Tomar imagen / seleccionar imagen ---
   async takeImage() {
 
-    let user= this.user();
-    let path = `users/${user.uid}`
+    let user = this.user();
+    let path = `users/${user.uid}`;
+    let imagePath = `${user.uid}/profile`;
 
-      const loading = await this.utilsSvc.loading();
-      await loading.present();
+    const loading = await this.utilsSvc.loading();
+    await loading.present();
 
-    const dataUrl = (await this.utilsSvc.takePicture('Imagen de perfil')).dataUrl;
-  
+    const picture = await this.utilsSvc.takePicture('Imagen de perfil');
 
-  let imagePath = `${user.uid}/profile`;
-  user.image = await this.firebaseSvc.uploadImage(imagePath, dataUrl);
+    // ---- Validar si el usuario canceló la cámara ----
+    if (!picture || !picture.dataUrl) {
+      loading.dismiss();
+      return;
+    }
 
+    const dataUrl = picture.dataUrl;
 
-  this.firebaseSvc.updateDocument(path, {image: user.image}).then(async res => {
+    try {
+      // Subir imagen
+      user.image = await this.firebaseSvc.uploadImage(imagePath, dataUrl);
 
-        this.utilsSvc.saveInLocalStorage('user', user)
+      // Guardarla en Firestore
+      await this.firebaseSvc.updateDocument(path, { image: user.image });
 
-        this.utilsSvc.presentToast({
-          message: 'Imagen actualizada exitosamente',
-          duration: 1500,
-          color: 'success',
-          position: 'middle',
-          icon: 'checkmark-circle-outline'
-        })
+      // Guardar en local
+      this.utilsSvc.saveInLocalStorage('user', user);
 
-      }).catch(error => {
-        console.log(error);
+      // Mostrar toast de éxito
+      this.utilsSvc.presentToast({
+        message: 'Imagen actualizada exitosamente',
+        duration: 1500,
+        color: 'success',
+        position: 'middle',
+        icon: 'checkmark-circle-outline'
+      });
 
-        this.utilsSvc.presentToast({
-          message: error.message,
-          duration: 2500,
-          color: 'primary',
-          position: 'middle',
-          icon: 'alert-circle-outline'
-        })
+    } catch (error: any) {
 
-      }).finally(() => {
-        loading.dismiss();
-      })
-    
+      console.log(error);
+      this.utilsSvc.presentToast({
+        message: error.message,
+        duration: 2500,
+        color: 'primary',
+        position: 'middle',
+        icon: 'alert-circle-outline'
+      });
+
+    } finally {
+      loading.dismiss();
+    }
   }
 
 }
