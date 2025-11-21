@@ -1,33 +1,64 @@
 <app-header backButton="/main/home" title="Registro de controles"></app-header>
 
 <ion-content class="ion-padding">
-  <ion-searchbar placeholder="Buscar control..." [(ngModel)]="busqueda"></ion-searchbar>
 
-  <ion-button class="ion-margin-top" expand="block" (click)="abrirFormulario()">Añadir Control</ion-button>
+  <!-- Buscador -->
+  <ion-searchbar 
+    placeholder="Buscar control..." 
+    [(ngModel)]="busqueda">
+  </ion-searchbar>
+
+  <!-- Botón agregar -->
+  <ion-button 
+    class="ion-margin-top" 
+    expand="block" 
+    (click)="abrirFormulario()">
+    Añadir Control
+  </ion-button>
 
   <div class="grid">
+
+    <!-- CONTROLES REALIZADOS -->
     <div>
       <h2>Controles realizados</h2>
-      <ion-list>
+
+      <ion-list *ngIf="controlesRealizados.length > 0; else noRealizados">
         <ion-item *ngFor="let control of controlesRealizados">
-          {{ control.nombre }}
+          {{ control.nombre }} — 
+          {{ control.fecha | date:'dd/MM/yyyy HH:mm' }}
         </ion-item>
       </ion-list>
+
+      <ng-template #noRealizados>
+        <p class="empty">No hay controles realizados.</p>
+      </ng-template>
     </div>
 
+    <!-- CONTROLES PENDIENTES -->
     <div>
       <h2>Controles pendientes</h2>
-      <ion-list>
+
+      <ion-list *ngIf="controlesPendientes.length > 0; else noPendientes">
         <ion-item *ngFor="let control of controlesPendientes">
-          {{ control.nombre }}
+          {{ control.nombre }} —
+          {{ control.fecha | date:'dd/MM/yyyy HH:mm' }}
         </ion-item>
       </ion-list>
+
+      <ng-template #noPendientes>
+        <p class="empty">No hay controles pendientes.</p>
+      </ng-template>
     </div>
+
   </div>
 
-  <!-- Modal del formulario -->
-  <ion-modal [isOpen]="mostrarFormulario" (didDismiss)="cerrarFormulario()">
+  <!-- MODAL -->
+  <ion-modal 
+    [isOpen]="mostrarFormulario" 
+    (didDismiss)="cerrarFormulario()">
+
     <ng-template>
+
       <ion-header>
         <ion-toolbar>
           <ion-title>Nuevo Control</ion-title>
@@ -36,19 +67,49 @@
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
+
       <ion-content class="ion-padding">
-        <ion-item>
-          <ion-label position="floating">Nombre del control</ion-label>
-          <ion-input [(ngModel)]="nuevoControl.nombre"></ion-input>
-        </ion-item>
 
-        <ion-item>
-          <ion-label position="floating">Fecha</ion-label>
-          <ion-datetime [(ngModel)]="nuevoControl.fecha"></ion-datetime>
-        </ion-item>
+        <form [formGroup]="form" (ngSubmit)="guardarControl()">
 
-        <ion-button expand="full" (click)="guardarControl()">Guardar</ion-button>
+          <!-- Nombre -->
+          <ion-item>
+            <ion-label position="floating">Nombre del control</ion-label>
+            <ion-input formControlName="nombre"></ion-input>
+          </ion-item>
+
+          <div class="validators" *ngIf="form.controls.nombre.invalid && form.controls.nombre.touched">
+            <div *ngIf="form.controls.nombre.errors?.['required']">
+              Nombre requerido
+            </div>
+          </div>
+
+          <!-- Fecha -->
+          <ion-item>
+            <ion-label position="floating">Fecha</ion-label>
+            <ion-datetime formControlName="fecha" presentation="date-time"></ion-datetime>
+          </ion-item>
+
+          <div class="validators" *ngIf="form.controls.fecha.invalid && form.controls.fecha.touched">
+            <div *ngIf="form.controls.fecha.errors?.['required']">
+              Fecha requerida
+            </div>
+          </div>
+
+          <!-- Guardar -->
+          <ion-button 
+            expand="full" 
+            type="submit" 
+            class="ion-margin-top"
+            [disabled]="form.invalid">
+            Guardar
+          </ion-button>
+
+        </form>
+
       </ion-content>
     </ng-template>
+
   </ion-modal>
+
 </ion-content>

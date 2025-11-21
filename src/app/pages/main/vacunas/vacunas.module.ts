@@ -1,8 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-
 import { VacunasPageRoutingModule } from './vacunas-routing.module';
 import { VacunasPage } from './vacunas.page';
 import { SharedModule } from 'src/app/shared/shared-module';
@@ -11,9 +10,10 @@ import { SharedModule } from 'src/app/shared/shared-module';
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     IonicModule,
     VacunasPageRoutingModule,
-    SharedModule,
+    SharedModule
   ],
   declarations: [VacunasPage]
 })
