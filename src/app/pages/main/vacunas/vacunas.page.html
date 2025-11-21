@@ -1,47 +1,96 @@
-<app-header backButton="/main/home" title="Registro de Vacunas"></app-header>
+<app-header [showMenu]="true" title="Registro de Vacunas"></app-header>
 
-<ion-content class="ion-padding">
+<ion-content class="vacunas-page ion-padding">
 
-  <ion-searchbar placeholder="Buscar vacuna..."></ion-searchbar>
-      <ion-button class="ion-margin-top" expand="block" (click)="addVacuna()">
-        <ion-icon name="add-circle-outline"></ion-icon>
-        Añadir vacuna
-      </ion-button>
+  <!-- Buscador -->
+  <ion-searchbar
+    placeholder="Buscar vacuna..."
+    class="vacunas-search">
+  </ion-searchbar>
+
+  <!-- Grid de tarjetas -->
   <ion-grid>
     <ion-row>
+
       <!-- Columna 1: Realizadas -->
-      <ion-col size="6">
-        <ion-card>
+      <ion-col size="12" sizeMd="6">
+        <ion-card class="vacunas-card realizadas-card">
           <ion-card-header>
-            <ion-card-title>Vacunas Realizadas</ion-card-title>
+            <ion-card-title>Vacunas realizadas</ion-card-title>
           </ion-card-header>
-          <ion-list>
-            <ion-item *ngFor="let v of realizadas">
-              <ion-label>
-                <h2>{{ v.nombre }}</h2>
-                <p>{{ v.fecha }}</p>
-              </ion-label>
-            </ion-item>
-          </ion-list>
+          <ion-card-content>
+            <ion-list *ngIf="realizadas?.length; else noRealizadas" lines="none">
+              <ion-item *ngFor="let v of realizadas" class="vacuna-item">
+                <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+                <ion-label>
+                  <h2>{{ v.nombre }}</h2>
+                  <p>{{ v.fecha }}</p>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+
+            <ng-template #noRealizadas>
+              <p class="empty-text">
+                Aún no hay vacunas registradas como realizadas.
+              </p>
+            </ng-template>
+          </ion-card-content>
         </ion-card>
       </ion-col>
 
       <!-- Columna 2: Pendientes -->
-      <ion-col size="6">
-        <ion-card>
+      <ion-col size="12" sizeMd="6">
+        <ion-card class="vacunas-card pendientes-card">
           <ion-card-header>
-            <ion-card-title>Vacunas Pendientes</ion-card-title>
+            <ion-card-title>Vacunas pendientes</ion-card-title>
           </ion-card-header>
-          <ion-list>
-            <ion-item *ngFor="let v of pendientes">
-              <ion-label>
-                <h2>{{ v.nombre }}</h2>
-                <p>{{ v.fecha }}</p>
-              </ion-label>
-            </ion-item>
-          </ion-list>
+          <ion-card-content>
+            <ion-list *ngIf="pendientes?.length; else noPendientes" lines="none">
+              <ion-item *ngFor="let v of pendientes" class="vacuna-item">
+                <ion-icon slot="start" name="alert-circle-outline"></ion-icon>
+                <ion-label>
+                  <h2>{{ v.nombre }}</h2>
+                  <p>{{ v.fecha }}</p>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+
+            <ng-template #noPendientes>
+              <p class="empty-text">
+                No tienes vacunas pendientes registradas.
+              </p>
+            </ng-template>
+          </ion-card-content>
         </ion-card>
       </ion-col>
+
     </ion-row>
   </ion-grid>
+
+  <!-- FAB flotante para añadir vacuna -->
+  <button class="fab-add" (click)="addVacuna()">
+    <ion-icon name="add-outline"></ion-icon>
+  </button>
+
 </ion-content>
+
+<!-- Menú inferior común -->
+<ion-footer class="bottom-nav">
+  <ion-toolbar>
+
+    <!-- Home -->
+    <ion-buttons slot="start">
+      <ion-button fill="clear" routerLink="/main/home">
+        <ion-icon name="home-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <!-- Perfil -->
+    <ion-buttons slot="end">
+      <ion-button fill="clear" routerLink="/main/profile">
+        <ion-icon name="person-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-footer>
