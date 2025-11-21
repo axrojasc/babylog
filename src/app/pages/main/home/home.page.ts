@@ -5,6 +5,8 @@ import { User } from 'src/app/models/user.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { AddUpdateImageComponent } from 'src/app/shared/components/add-update-image/add-update-image.component';
+import { AlertController } from '@ionic/angular';
+
 
 @Component({
   selector: 'app-home',
@@ -16,6 +18,7 @@ export class HomePage {
 
   firebaseSvc = inject(FirebaseService);
   utilsSvc = inject(UtilsService);
+  alertController = inject(AlertController);
 
   image: Imagen[] = [];
   loading: boolean = false;
@@ -87,7 +90,7 @@ export class HomePage {
         this.utilsSvc.presentToast({
           message: 'Perfil eliminado exitosamente',
           duration: 1500,
-          color: 'success',
+          color: 'primary',
           position: 'middle',
           icon: 'checkmark-circle-outline'
         })
@@ -108,6 +111,30 @@ export class HomePage {
       })
     
   }
+
+  //---------- popup de confirmar eliminacion de imagen-------->
+
+  async confirmDelete(image: Imagen) {
+  const alert = await this.alertController.create({
+    header: 'Eliminar imagen',
+    message: '¿Estás seguro de que deseas eliminar esta imagen de perfil?',
+    buttons: [
+      {
+        text: 'Cancelar',
+        role: 'cancel'
+      },
+      {
+        text: 'Eliminar',
+        role: 'destructive',
+        handler: () => {
+          this.deleteImage(image);  
+        }
+      }
+    ]
+  });
+
+  await alert.present();
+}
 
   private readonly router = inject(Router);
 

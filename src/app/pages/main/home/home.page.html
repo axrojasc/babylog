@@ -15,7 +15,7 @@
       <ion-col size="12">
         <ion-card class="baby-card">
           <ion-avatar>
-            <img [src]="image[0]?.image" (click)="addUpdateImage()"/>
+            <img [src]="image[0]?.image" (click)="addUpdateImage()" />
           </ion-avatar>
           <br>
           <br>
@@ -26,14 +26,17 @@
             <ion-item-option (click)="addUpdateImage(image[0])">
               <ion-icon class="option-btn" name="create-outline"></ion-icon>
             </ion-item-option>
-            <ion-item-option color="danger" (click)="deleteImage(image[0])">
+            <ion-item-option color="danger" (click)="confirmDelete(image[0])">
               <ion-icon class="option-btn" name="trash-outline"></ion-icon>
             </ion-item-option>
           </ion-card-content>
         </ion-card>
       </ion-col>
 
-      <ion-list *ngIf="loading">
+
+      <!-- Ciclo de carga inecesario para perfil no encontrado -->
+
+      <!--<ion-list *ngIf="loading">
         <ion-item class="product-item" *ngFor="let p of [1,1,1,1,1,1,1,1]">
             <ion-avatar slot="start">
               <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
@@ -43,12 +46,12 @@
               <ion-skeleton-text animated style="width: 30%"></ion-skeleton-text>
           </ion-label>
         </ion-item>
-      </ion-list>
-      
-      <div *ngIf="!loading && !image.length" class="empty">
+      </ion-list>-->
+
+      <!--<div *ngIf="!loading && !image.length" class="empty">
         <ion-icon name="shield-outline"></ion-icon>
         <h3>No hay perfil disponible</h3>
-      </div>
+      </div>-->
 
       <ion-col size="6">
         <ion-card class="stat-card sleep" (click)="goToSueno()">
@@ -96,4 +99,3 @@
     </ion-row>
   </ion-grid>
 </ion-content>
-
