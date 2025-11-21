@@ -63,4 +63,28 @@
     </ng-template>
   </ion-modal>
 
+  <!-- 🟣 Botón flotante Instagram-style -->
+  <button class="fab-add" (click)="alternarFormulario()">
+    <ion-icon name="add-outline"></ion-icon>
+  </button>
+
 </ion-content>
+
+<!-- Barra inferior -->
+<ion-footer class="bottom-nav">
+  <ion-toolbar>
+
+    <ion-buttons slot="start">
+      <ion-button fill="clear" routerLink="/main/home">
+        <ion-icon name="home-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" routerLink="/main/profile">
+        <ion-icon name="person-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-footer>

@@ -11,6 +11,7 @@ export class HeaderComponent {
   @Input() title!: string;
   @Input() backButton!: string;
   @Input() isModal: boolean;
+  @Input() showMenu: boolean;
 
   utilsSvc = inject(UtilsService);
 

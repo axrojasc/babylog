@@ -57,4 +57,30 @@
     </ng-template>
   </ion-modal>
 
+  <!-- FAB flotante para alternar formulario -->
+  <button class="fab-add" (click)="alternarFormulario()">
+    <ion-icon name="add-outline"></ion-icon>
+  </button>
+
 </ion-content>
+
+<!-- Menú inferior BabyLog -->
+<ion-footer class="bottom-nav">
+  <ion-toolbar>
+
+    <!-- Home -->
+    <ion-buttons slot="start">
+      <ion-button fill="clear" routerLink="/main/home">
+        <ion-icon name="home-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <!-- Perfil -->
+    <ion-buttons slot="end">
+      <ion-button fill="clear" routerLink="/main/profile">
+        <ion-icon name="person-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-footer>

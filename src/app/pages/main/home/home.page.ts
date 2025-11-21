@@ -5,6 +5,8 @@ import { User } from 'src/app/models/user.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { AddUpdateImageComponent } from 'src/app/shared/components/add-update-image/add-update-image.component';
+import { AlertController } from '@ionic/angular';
+
 
 @Component({
   selector: 'app-home',
@@ -16,8 +18,10 @@ export class HomePage {
 
   firebaseSvc = inject(FirebaseService);
   utilsSvc = inject(UtilsService);
+  alertController = inject(AlertController);
 
   image: Imagen[] = [];
+  loading: boolean = false;
 
   ngOnInit() {
   }
@@ -29,26 +33,108 @@ export class HomePage {
     this.getImage();
   }
 
+  doRefresh(event) {
+
+    setTimeout(() => {
+      this.getImage();
+      console.log('Async operation has ended');
+      event.target.complete();
+    }, 1000);
+  }
+
   // ----- Obtener imagen ----
   getImage() {
     let path = `users/${this.user().uid}/image`
+
+    this.loading = true;
 
     let sub = this.firebaseSvc.getCollectionData(path).subscribe({
       next: (res: any) => {
         console.log(res);
         this.image = res;
+        
+        this.loading = false;
+
         sub.unsubscribe();
       }
     })
   }
 
   // ------ Agregar o actualizar imagen -----
-  addUpdateImage() {
-    this.utilsSvc.presentModal({
+  async addUpdateImage(image?: Imagen) {
+    const result = await this.utilsSvc.presentModal({
       component: AddUpdateImageComponent,
-      cssClass: 'add-update-modal'
-    })
+      cssClass: 'add-update-modal',
+      componentProps: { image: this.image[0] ?? null }
+    });
+
+    if (result?.success) {
+    this.getImage();
   }
+  }
+
+  async deleteImage(image: Imagen) {
+
+      let path = `users/${this.user().uid}/image/${image.id}`
+
+      const loading = await this.utilsSvc.loading();
+      await loading.present();
+
+      let imagePath = await this.firebaseSvc.getFilePath(image.image);
+      await this.firebaseSvc.deleteFile(imagePath);
+
+      this.firebaseSvc.deleteDocument(path).then(async res => {
+
+        this.image = this.image.filter(p => p.id !== image.id);
+
+        this.utilsSvc.presentToast({
+          message: 'Perfil eliminado exitosamente',
+          duration: 1500,
+          color: 'primary',
+          position: 'middle',
+          icon: 'checkmark-circle-outline'
+        })
+
+      }).catch(error => {
+        console.log(error);
+
+        this.utilsSvc.presentToast({
+          message: error.message,
+          duration: 2500,
+          color: 'primary',
+          position: 'middle',
+          icon: 'alert-circle-outline'
+        })
+
+      }).finally(() => {
+        loading.dismiss();
+      })
+    
+  }
+
+  //---------- popup de confirmar eliminacion de imagen-------->
+
+  async confirmDelete(image: Imagen) {
+  const alert = await this.alertController.create({
+    header: 'Eliminar imagen',
+    message: '¿Estás seguro de que deseas eliminar esta imagen de perfil?',
+    buttons: [
+      {
+        text: 'Cancelar',
+        role: 'cancel'
+      },
+      {
+        text: 'Eliminar',
+        role: 'destructive',
+        handler: () => {
+          this.deleteImage(image);  
+        }
+      }
+    ]
+  });
+
+  await alert.present();
+}
 
   private readonly router = inject(Router);
 

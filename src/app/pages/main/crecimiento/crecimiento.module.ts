@@ -17,4 +17,4 @@ import { SharedModule } from 'src/app/shared/shared-module';
   ],
   declarations: [CrecimientoPage],
 })
-export class CrecimientoPageModule {}
+export class CrecimientoPageModule { }

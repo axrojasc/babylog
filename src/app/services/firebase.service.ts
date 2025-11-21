@@ -4,9 +4,11 @@ import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, up
 
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { getFirestore, setDoc, doc, getDoc, addDoc, collection, collectionData, query, updateDoc } from '@angular/fire/firestore';
+import { getFirestore, setDoc, doc, getDoc, addDoc, collection, collectionData, query, updateDoc, deleteDoc } from '@angular/fire/firestore';
+import { UtilsService } from './utils.service';
 
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { getStorage, uploadString, ref, getDownloadURL } from "firebase/storage";
+import { getStorage, uploadString, ref, getDownloadURL, deleteObject } from "firebase/storage";
 
 import { UtilsService } from './utils.service';
 import { User } from 'src/app/models/user.model';
@@ -47,7 +49,13 @@ export class FirebaseService {
     return updateDoc(doc(getFirestore(), path), data);
   }
 
-  getCollectionData(path: string, collectionQuery?: any) {
+  // ---------- Eliminar un documento ---
+  deleteDocument(path: string) {
+    return deleteDoc(doc(getFirestore(), path));
+  }
+
+  // ----- Obtener documentos de una colección -----
+  getCollectionData(path: string, collecionQuery?: any ) {
     const ref = collection(getFirestore(), path);
     return collectionData(query(ref, collectionQuery), { idField: 'id' });
   }
@@ -65,9 +73,18 @@ export class FirebaseService {
     return uploadString(ref(getStorage(), path), data_url, 'data_url').then(() => {
       return getDownloadURL(ref(getStorage(), path));
     });
+ 
+  // ------ Obtener ruta de la imagen con su url ----
+  async getFilePath(url: string) {
+    return ref(getStorage(), url).fullPath
   }
 
-  // ---------- Recuperar contraseña ----------
+  // Eliminar 
+  deleteFile(path: string) {
+    return deleteObject(ref(getStorage(), path));
+  }
+
+  // ----- Enviar email para restablecer contraseña ---
   sendRecoveryEmail(email: string) {
     return sendPasswordResetEmail(getAuth(), email);
   }

@@ -1,70 +1,135 @@
-<app-header title="Inicio"></app-header>
-<ion-content class="home-bg">
-  <div class="header">
-    <h2>Bienvenido a BabyLog</h2>
+<app-header [showMenu]="true" title="BabyLog"></app-header>
+
+<ion-content class="home-dashboard">
+
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- HERO / PERFIL -->
+  <div class="hero-card" *ngIf="!loading && image.length">
+
+    <div class="hero-top">
+      <div class="hero-avatar-wrapper">
+        <ion-avatar class="hero-avatar">
+          <img [src]="image[0]?.image" (click)="addUpdateImage()" />
+        </ion-avatar>
+      </div>
+
+      <div class="hero-info">
+        <h2 class="hero-name">{{ image[0]?.name }}</h2>
+        <p class="hero-subtitle">Registro pediátrico</p>
+
+        <div class="hero-badges">
+          <span class="badge badge-primary">Controles al día</span>
+          <span class="badge badge-soft">Vacunas próximas</span>
+        </div>
+
+        <div class="hero-actions">
+          <ion-button size="small" fill="solid" color="light" (click)="addUpdateImage(image[0])">
+            <ion-icon slot="start" name="create-outline"></ion-icon>
+            Editar
+          </ion-button>
+
+          <ion-button size="small" fill="clear" color="danger" (click)="confirmDelete(image[0])">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-bottom">
+      <div class="hero-stat">
+        <span class="hero-stat-label">Sueño promedio</span>
+        <span class="hero-stat-value">9h</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-label">Próxima vacuna</span>
+        <span class="hero-stat-value">12 Nov</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-label">Próximo control</span>
+        <span class="hero-stat-value">25 Nov</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-label">Peso actual</span>
+        <span class="hero-stat-value">3.5 kg</span>
+      </div>
+    </div>
   </div>
 
-  <ion-grid>
+  <!-- Si no hay perfil todavía -->
+  <div class="hero-empty" *ngIf="!loading && !image.length">
+    <h2>Bienvenido a BabyLog</h2>
+    <p>Crea el perfil de tu bebé para comenzar a registrar su crecimiento.</p>
+    <ion-button (click)="addUpdateImage()">Crear perfil</ion-button>
+  </div>
+
+  <!-- DASHBOARD PRINCIPAL -->
+  <div class="section-header" *ngIf="!loading">
+    <h3>Resumen de hoy</h3>
+  </div>
+
+  <ion-grid *ngIf="!loading">
     <ion-row>
-      <ion-col size="12">
-        <ion-card class="baby-card">
-          <ion-avatar>
-            <img [src]="image[0]?.image" (click)="addUpdateImage()"/>
-          </ion-avatar>
-          <br>
-          <br>
-          <ion-label class="name">Hola, {{ image[0]?.name }}</ion-label>
+
+      <!-- Sueño -->
+      <ion-col size="6">
+        <ion-card class="kpi-card kpi-sleep" (click)="goToSueno()">
           <ion-card-content>
-            <h3>Crecimiento general</h3>
-            <p>Altura, peso y desarrollo</p>
+            <div class="kpi-icon">
+              <ion-icon name="moon-outline"></ion-icon>
+            </div>
+            <div class="kpi-title">Sueño</div>
+            <div class="kpi-value">9h</div>
+            <div class="kpi-subtitle">Promedio diario</div>
           </ion-card-content>
         </ion-card>
       </ion-col>
 
+      <!-- Vacunas -->
       <ion-col size="6">
-        <ion-card class="stat-card sleep" (click)="goToSueno()">
-          <ion-card-header>
-            <ion-card-title>💤 Sueño</ion-card-title>
-          </ion-card-header>
+        <ion-card class="kpi-card kpi-vacunas" (click)="goToVacunas()">
           <ion-card-content>
-            <p>Promedio diario: 9h</p>
+            <div class="kpi-icon">
+              <ion-icon name="bandage-outline"></ion-icon>
+            </div>
+            <div class="kpi-title">Vacunas</div>
+            <div class="kpi-value">12 Nov</div>
+            <div class="kpi-subtitle">Próxima dosis</div>
           </ion-card-content>
         </ion-card>
       </ion-col>
 
+      <!-- Controles -->
       <ion-col size="6">
-        <ion-card class="stat-card vacunas" (click)="goToVacunas()">
-          <ion-card-header>
-            <ion-card-title>💉 Vacunas</ion-card-title>
-          </ion-card-header>
+        <ion-card class="kpi-card kpi-controles" (click)="goToControles()">
           <ion-card-content>
-            <p>Próxima: Pentavalente - 12 Nov</p>
+            <div class="kpi-icon">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </div>
+            <div class="kpi-title">Controles</div>
+            <div class="kpi-value">25 Nov</div>
+            <div class="kpi-subtitle">Próximo control</div>
           </ion-card-content>
         </ion-card>
       </ion-col>
 
+      <!-- Peso -->
       <ion-col size="6">
-        <ion-card class="stat-card controles" (click)="goToControles()">
-          <ion-card-header>
-            <ion-card-title>📅 Controles</ion-card-title>
-          </ion-card-header>
+        <ion-card class="kpi-card kpi-peso" (click)="goToPeso()">
           <ion-card-content>
-            <p>Próximo control: 25 Nov</p>
+            <div class="kpi-icon">
+              <ion-icon name="fitness-outline"></ion-icon>
+            </div>
+            <div class="kpi-title">Peso</div>
+            <div class="kpi-value">3.5 kg</div>
+            <div class="kpi-subtitle">Último registro</div>
           </ion-card-content>
         </ion-card>
       </ion-col>
 
-      <ion-col size="6">
-        <ion-card class="stat-card peso" (click)="goToPeso()">
-          <ion-card-header>
-            <ion-card-title>⚖️ Peso</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <p>3.5 kg</p>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
     </ion-row>
   </ion-grid>
-</ion-content>
 
+</ion-content>

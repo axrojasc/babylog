@@ -1,4 +1,104 @@
-ion-card {
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+/* Fondo general */
+.vacunas-page {
+  --background: #f5f8fc;
+  padding-bottom: 120px; /* espacio para menú inferior */
+}
+
+/* Search */
+.vacunas-search {
+  --background: #ffffff;
+  --border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+/* Tarjetas generales */
+.vacunas-card {
+  border-radius: 22px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+.vacunas-card ion-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f3b57;
+}
+
+/* Diferente fondo para cada grupo */
+.realizadas-card {
+  background: linear-gradient(135deg, #e3f8ff, #ffffff);
+}
+
+.pendientes-card {
+  background: linear-gradient(135deg, #ffeef4, #ffffff);
+}
+
+/* Items de vacuna */
+.vacuna-item {
+  margin-bottom: 6px;
+  border-radius: 14px;
+  --background: rgba(255, 255, 255, 0.8);
+}
+
+.vacuna-item ion-icon {
+  font-size: 1.4rem;
+  color: #64b6ac;
+}
+
+.pendientes-card .vacuna-item ion-icon {
+  color: #d1789c;
+}
+
+.vacuna-item h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f3b57;
+}
+
+.vacuna-item p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #788493;
+}
+
+/* Mensaje vacío */
+.empty-text {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #788493;
+}
+
+/* FAB flotante igual que en Sueño */
+.fab-add {
+  position: fixed;
+  bottom: 65px; /* justo arriba del footer */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #d1789c;
+  color: #64b6ac;
+  border: none;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.fab-add ion-icon {
+  font-size: 2rem;
+}
+
+/* Menú inferior como en Sueño */
+.bottom-nav ion-toolbar {
+  --background: #ffffff;
+  --border-color: rgba(0,0,0,0.05);
+  box-shadow: 0 -3px 12px rgba(0,0,0,0.12);
+  min-height: 56px;
+}
+
+.bottom-nav ion-button[fill="clear"] {
+  --color: #1f3b57;
 }

@@ -1,6 +1,9 @@
-<app-header backButton="/main/home" title="Alimentación"></app-header>
+<app-header [showMenu]="true" title="Alimentación"></app-header>
 
-<ion-content class="ion-padding">
+<ion-content class="alimentacion-page ion-padding">
+
+  <!-- Título del historial -->
+  <h2 class="section-title">Historial de comidas</h2>
 
   <ion-searchbar placeholder="Buscar alimento..." [(ngModel)]="busqueda"></ion-searchbar>
 
@@ -18,6 +21,15 @@
     </ion-item>
   </ion-list>
 
+  <ng-template #sinComidas>
+    <p class="empty-text">No hay comidas registradas aún.</p>
+  </ng-template>
+
+  <!-- FAB flotante para añadir comida -->
+  <button class="fab-add" (click)="abrirFormulario()">
+    <ion-icon name="add-outline"></ion-icon>
+  </button>
+
   <ion-modal [isOpen]="mostrarFormulario" (didDismiss)="cerrarFormulario()">
     <ng-template>
       <ion-header>
@@ -30,6 +42,7 @@
       </ion-header>
 
       <ion-content class="ion-padding">
+
         <form [formGroup]="form" (ngSubmit)="guardarRegistro()">
 
           <ion-item>
@@ -61,8 +74,30 @@
           </ion-button>
 
         </form>
+
       </ion-content>
     </ng-template>
   </ion-modal>
 
 </ion-content>
+
+<!-- Menú inferior BabyLog -->
+<ion-footer class="bottom-nav">
+  <ion-toolbar>
+
+    <!-- Home -->
+    <ion-buttons slot="start">
+      <ion-button fill="clear" routerLink="/main/home">
+        <ion-icon name="home-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <!-- Perfil -->
+    <ion-buttons slot="end">
+      <ion-button fill="clear" routerLink="/main/profile">
+        <ion-icon name="person-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-footer>

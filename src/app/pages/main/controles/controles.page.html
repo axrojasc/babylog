@@ -1,4 +1,4 @@
-<app-header backButton="/main/home" title="Registro de controles"></app-header>
+<app-header [showMenu]="true" title="Registro de Controles"></app-header>
 
 <ion-content class="ion-padding">
 
@@ -61,7 +61,7 @@
 
       <ion-header>
         <ion-toolbar>
-          <ion-title>Nuevo Control</ion-title>
+          <ion-title>Nuevo control</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="cerrarFormulario()">Cerrar</ion-button>
           </ion-buttons>
@@ -113,3 +113,24 @@
   </ion-modal>
 
 </ion-content>
+
+<!-- Menú inferior común -->
+<ion-footer class="bottom-nav">
+  <ion-toolbar>
+
+    <!-- Home -->
+    <ion-buttons slot="start">
+      <ion-button fill="clear" routerLink="/main/home">
+        <ion-icon name="home-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <!-- Perfil -->
+    <ion-buttons slot="end">
+      <ion-button fill="clear" routerLink="/main/profile">
+        <ion-icon name="person-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-footer>

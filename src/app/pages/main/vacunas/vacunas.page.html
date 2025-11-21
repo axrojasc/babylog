@@ -1,6 +1,6 @@
-<app-header backButton="/main/home" title="Vacunas"></app-header>
+<app-header [showMenu]="true" title="Registro de Vacunas"></app-header>
 
-<ion-content class="ion-padding">
+<ion-content class="vacunas-page ion-padding">
 
   <ion-searchbar placeholder="Buscar vacuna..." [(ngModel)]="busqueda"></ion-searchbar>
 
@@ -49,6 +49,7 @@
     </ion-row>
   </ion-grid>
 
+
   <!-- MODAL -->
   <ion-modal [isOpen]="mostrarFormulario" (didDismiss)="cerrarFormulario()">
     <ng-template>
@@ -89,3 +90,24 @@
   </ion-modal>
 
 </ion-content>
+
+<!-- Menú inferior común -->
+<ion-footer class="bottom-nav">
+  <ion-toolbar>
+
+    <!-- Home -->
+    <ion-buttons slot="start">
+      <ion-button fill="clear" routerLink="/main/home">
+        <ion-icon name="home-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <!-- Perfil -->
+    <ion-buttons slot="end">
+      <ion-button fill="clear" routerLink="/main/profile">
+        <ion-icon name="person-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-footer>
