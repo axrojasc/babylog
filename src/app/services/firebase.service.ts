@@ -3,9 +3,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
 
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { getFirestore, setDoc, doc, getDoc, addDoc, collection, collectionData, query, updateDoc } from '@angular/fire/firestore';
 import { getFirestore, setDoc, doc, getDoc, addDoc, collection, collectionData, query, updateDoc, deleteDoc } from '@angular/fire/firestore';
-import { UtilsService } from './utils.service';
 
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { getStorage, uploadString, ref, getDownloadURL, deleteObject } from "firebase/storage";
@@ -37,7 +35,7 @@ export class FirebaseService {
   }
 
   updateUser(displayName: string) {
-    return updateProfile(getAuth().currentUser, { displayName });
+    return updateProfile(getAuth().currentUser!, { displayName });
   }
 
   // ---------- Base de Datos ----------
@@ -49,15 +47,16 @@ export class FirebaseService {
     return updateDoc(doc(getFirestore(), path), data);
   }
 
-  // ---------- Eliminar un documento ---
   deleteDocument(path: string) {
     return deleteDoc(doc(getFirestore(), path));
   }
 
-  // ----- Obtener documentos de una colección -----
-  getCollectionData(path: string, collecionQuery?: any ) {
-    const ref = collection(getFirestore(), path);
-    return collectionData(query(ref, collectionQuery), { idField: 'id' });
+  getCollectionData(path: string, collectionQuery?: any) {
+    const refCol = collection(getFirestore(), path);
+    return collectionData(
+      collectionQuery ? query(refCol, collectionQuery) : refCol,
+      { idField: 'id' }
+    );
   }
 
   async getDocument(path: string) {
@@ -70,16 +69,14 @@ export class FirebaseService {
 
   // ---------- Storage ----------
   async uploadImage(path: string, data_url: string) {
-    return uploadString(ref(getStorage(), path), data_url, 'data_url').then(() => {
-      return getDownloadURL(ref(getStorage(), path));
-    });
- 
-  // ------ Obtener ruta de la imagen con su url ----
-  async getFilePath(url: string) {
-    return ref(getStorage(), url).fullPath
+    await uploadString(ref(getStorage(), path), data_url, 'data_url');
+    return getDownloadURL(ref(getStorage(), path));
   }
 
-  // Eliminar 
+  async getFilePath(url: string) {
+    return ref(getStorage(), url).fullPath;
+  }
+
   deleteFile(path: string) {
     return deleteObject(ref(getStorage(), path));
   }
@@ -95,5 +92,4 @@ export class FirebaseService {
     localStorage.removeItem('user');
     this.utilsSvc.routerLink('/auth');
   }
-
 }
