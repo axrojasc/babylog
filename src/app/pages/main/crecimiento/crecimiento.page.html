@@ -1,43 +1,61 @@
-<app-header [showMenu]="true" title="Crecimiento"></app-header>
+<app-header backButton="/main/home" title="Crecimiento"></app-header>
 
-<ion-content class="crecimiento-page ion-padding">
+<ion-content class="ion-padding">
 
-  <!-- Formulario de registro de crecimiento -->
-  <ion-card *ngIf="mostrarFormulario" class="crecimiento-form-card ion-margin-bottom">
-    <ion-card-header>
-      <ion-card-title>Registrar altura actual</ion-card-title>
-    </ion-card-header>
+  <!-- Gráfico -->
+  <div style="width: 100%; margin-bottom: 25px;">
+    <canvas id="chartCrecimiento"></canvas>
+  </div>
 
-    <ion-card-content>
-      <ion-item>
-        <ion-label position="floating">Altura (cm)</ion-label>
-        <ion-input type="number" [(ngModel)]="alturaActual"></ion-input>
-      </ion-item>
+  <ion-searchbar placeholder="Buscar registro..." [(ngModel)]="busqueda"></ion-searchbar>
 
-      <ion-item>
-        <ion-label position="floating">Fecha</ion-label>
-        <ion-input type="date" [(ngModel)]="fecha"></ion-input>
-      </ion-item>
+  <ion-button expand="block" class="ion-margin-top" (click)="abrirFormulario()">
+    Añadir registro
+  </ion-button>
 
-      <ion-button
-        expand="block"
-        class="confirm-btn ion-margin-top"
-        (click)="confirmarCrecimiento()">
-        Confirmar
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
+  <ion-list>
+    <ion-item *ngFor="let r of registros">
+      Peso: {{ r.peso }} kg - Talla: {{ r.talla }} cm - Fecha: {{ r.fecha | date:'dd/MM/yyyy' }}
+    </ion-item>
+  </ion-list>
 
-  <!-- Gráfico de crecimiento -->
-  <ion-card class="crecimiento-chart-card ion-margin-top">
-    <ion-card-header>
-      <ion-card-title>Gráfico de crecimiento</ion-card-title>
-    </ion-card-header>
+  <ion-modal [isOpen]="mostrarFormulario" (didDismiss)="cerrarFormulario()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Nuevo registro</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarFormulario()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
 
-    <ion-card-content>
-      <canvas #growthChart></canvas>
-    </ion-card-content>
-  </ion-card>
+      <ion-content class="ion-padding">
+        <form [formGroup]="form" (ngSubmit)="guardarRegistro()">
+
+          <ion-item>
+            <ion-label position="floating">Peso (kg)</ion-label>
+            <ion-input formControlName="peso" type="number"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="floating">Talla (cm)</ion-label>
+            <ion-input formControlName="talla" type="number"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="floating">Fecha</ion-label>
+            <ion-datetime formControlName="fecha" presentation="date"></ion-datetime>
+          </ion-item>
+
+          <ion-button expand="full" type="submit" [disabled]="form.invalid" class="ion-margin-top">
+            Guardar
+          </ion-button>
+
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 
   <!-- FAB flotante para alternar formulario -->
   <button class="fab-add" (click)="alternarFormulario()">

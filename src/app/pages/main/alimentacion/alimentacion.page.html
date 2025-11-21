@@ -5,15 +5,18 @@
   <!-- Título del historial -->
   <h2 class="section-title">Historial de comidas</h2>
 
-  <!-- Lista de comidas -->
-  <ion-list *ngIf="comidas.length > 0; else sinComidas" lines="none" class="comidas-list">
-    <ion-item *ngFor="let comida of comidas" class="comida-item">
-      <ion-icon slot="start" name="restaurant-outline"></ion-icon>
+  <ion-searchbar placeholder="Buscar alimento..." [(ngModel)]="busqueda"></ion-searchbar>
+
+  <ion-button expand="block" class="ion-margin-top" (click)="abrirFormulario()">
+    Añadir registro
+  </ion-button>
+
+  <ion-list>
+    <ion-item *ngFor="let r of registros">
       <ion-label>
-        <h3>{{ comida.nombre }}</h3>
-        <p><strong>Fecha:</strong> {{ comida.fecha | date: 'shortDate' }}</p>
-        <p><strong>Hora:</strong> {{ comida.hora }}</p>
-        <p><strong>Nutrición:</strong> {{ comida.infoNutricional }}</p>
+        <h2>{{ getDiaSemana(r.fecha) }} - {{ getHora(r.fecha) }}</h2>
+        <p>Alimento: {{ r.alimento }}</p>
+        <p>Cantidad: {{ r.cantidad }}</p>
       </ion-label>
     </ion-item>
   </ion-list>
@@ -27,12 +30,11 @@
     <ion-icon name="add-outline"></ion-icon>
   </button>
 
-  <!-- Modal -->
   <ion-modal [isOpen]="mostrarFormulario" (didDismiss)="cerrarFormulario()">
     <ng-template>
       <ion-header>
         <ion-toolbar>
-          <ion-title>Nueva comida</ion-title>
+          <ion-title>Nuevo registro</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="cerrarFormulario()">Cerrar</ion-button>
           </ion-buttons>
@@ -41,29 +43,37 @@
 
       <ion-content class="ion-padding">
 
-        <ion-item>
-          <ion-label position="floating">Nombre del alimento</ion-label>
-          <ion-input [(ngModel)]="nuevaComida.nombre"></ion-input>
-        </ion-item>
+        <form [formGroup]="form" (ngSubmit)="guardarRegistro()">
 
-        <ion-item>
-          <ion-label position="floating">Fecha</ion-label>
-          <ion-datetime presentation="date" [(ngModel)]="nuevaComida.fecha"></ion-datetime>
-        </ion-item>
+          <ion-item>
+            <ion-label position="floating">Alimento</ion-label>
+            <ion-input formControlName="alimento"></ion-input>
+          </ion-item>
+          <div class="validators" *ngIf="form.controls['alimento'].errors && form.controls['alimento'].touched">
+            <div *ngIf="form.controls['alimento'].errors?.['required']">Alimento requerido</div>
+          </div>
 
-        <ion-item>
-          <ion-label position="floating">Hora</ion-label>
-          <ion-input type="time" [(ngModel)]="nuevaComida.hora"></ion-input>
-        </ion-item>
+          <ion-item>
+            <ion-label position="floating">Cantidad</ion-label>
+            <ion-input formControlName="cantidad"></ion-input>
+          </ion-item>
+          <div class="validators" *ngIf="form.controls['cantidad'].errors && form.controls['cantidad'].touched">
+            <div *ngIf="form.controls['cantidad'].errors?.['required']">Cantidad requerida</div>
+          </div>
 
-        <ion-item>
-          <ion-label position="floating">Información nutricional</ion-label>
-          <ion-textarea rows="4" [(ngModel)]="nuevaComida.infoNutricional"></ion-textarea>
-        </ion-item>
+          <ion-item>
+            <ion-label position="floating">Fecha</ion-label>
+            <ion-datetime formControlName="fecha" presentation="date-time"></ion-datetime>
+          </ion-item>
+          <div class="validators" *ngIf="form.controls['fecha'].errors && form.controls['fecha'].touched">
+            <div *ngIf="form.controls['fecha'].errors?.['required']">Fecha requerida</div>
+          </div>
 
-        <ion-button expand="block" class="confirm-btn" (click)="guardarComida()">
-          Guardar comida
-        </ion-button>
+          <ion-button expand="full" type="submit" [disabled]="form.invalid" class="ion-margin-top">
+            Guardar
+          </ion-button>
+
+        </form>
 
       </ion-content>
     </ng-template>

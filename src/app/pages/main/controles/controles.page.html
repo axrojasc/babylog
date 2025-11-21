@@ -1,81 +1,64 @@
 <app-header [showMenu]="true" title="Registro de Controles"></app-header>
 
-<ion-content class="controles-page ion-padding">
+<ion-content class="ion-padding">
 
   <!-- Buscador -->
-  <ion-searchbar
-    placeholder="Buscar control..."
-    [(ngModel)]="busqueda"
-    class="controles-search">
+  <ion-searchbar 
+    placeholder="Buscar control..." 
+    [(ngModel)]="busqueda">
   </ion-searchbar>
 
-  <!-- Grid de tarjetas -->
-  <ion-grid>
-    <ion-row>
+  <!-- Botón agregar -->
+  <ion-button 
+    class="ion-margin-top" 
+    expand="block" 
+    (click)="abrirFormulario()">
+    Añadir Control
+  </ion-button>
 
-      <!-- Controles realizados -->
-      <ion-col size="12" sizeMd="6">
-        <ion-card class="controles-card realizados-card">
-          <ion-card-header>
-            <ion-card-title>Controles realizados</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-list *ngIf="controlesRealizados?.length; else noRealizados" lines="none">
-              <ion-item *ngFor="let control of controlesRealizados" class="control-item">
-                <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
-                <ion-label>
-                  <h2>{{ control.nombre }}</h2>
-                  <p *ngIf="control.fecha">Fecha: {{ control.fecha | date:'dd/MM/yyyy' }}</p>
-                </ion-label>
-              </ion-item>
-            </ion-list>
+  <div class="grid">
 
-            <ng-template #noRealizados>
-              <p class="empty-text">
-                Aún no hay controles registrados como realizados.
-              </p>
-            </ng-template>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
+    <!-- CONTROLES REALIZADOS -->
+    <div>
+      <h2>Controles realizados</h2>
 
-      <!-- Controles pendientes -->
-      <ion-col size="12" sizeMd="6">
-        <ion-card class="controles-card pendientes-card">
-          <ion-card-header>
-            <ion-card-title>Controles pendientes</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-list *ngIf="controlesPendientes?.length; else noPendientes" lines="none">
-              <ion-item *ngFor="let control of controlesPendientes" class="control-item">
-                <ion-icon slot="start" name="time-outline"></ion-icon>
-                <ion-label>
-                  <h2>{{ control.nombre }}</h2>
-                  <p *ngIf="control.fecha">Fecha: {{ control.fecha | date:'dd/MM/yyyy' }}</p>
-                </ion-label>
-              </ion-item>
-            </ion-list>
+      <ion-list *ngIf="controlesRealizados.length > 0; else noRealizados">
+        <ion-item *ngFor="let control of controlesRealizados">
+          {{ control.nombre }} — 
+          {{ control.fecha | date:'dd/MM/yyyy HH:mm' }}
+        </ion-item>
+      </ion-list>
 
-            <ng-template #noPendientes>
-              <p class="empty-text">
-                No tienes controles pendientes registrados.
-              </p>
-            </ng-template>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
+      <ng-template #noRealizados>
+        <p class="empty">No hay controles realizados.</p>
+      </ng-template>
+    </div>
 
-    </ion-row>
-  </ion-grid>
+    <!-- CONTROLES PENDIENTES -->
+    <div>
+      <h2>Controles pendientes</h2>
 
-  <!-- FAB flotante para abrir formulario -->
-  <button class="fab-add" (click)="abrirFormulario()">
-    <ion-icon name="add-outline"></ion-icon>
-  </button>
+      <ion-list *ngIf="controlesPendientes.length > 0; else noPendientes">
+        <ion-item *ngFor="let control of controlesPendientes">
+          {{ control.nombre }} —
+          {{ control.fecha | date:'dd/MM/yyyy HH:mm' }}
+        </ion-item>
+      </ion-list>
 
-  <!-- Modal del formulario -->
-  <ion-modal [isOpen]="mostrarFormulario" (didDismiss)="cerrarFormulario()">
+      <ng-template #noPendientes>
+        <p class="empty">No hay controles pendientes.</p>
+      </ng-template>
+    </div>
+
+  </div>
+
+  <!-- MODAL -->
+  <ion-modal 
+    [isOpen]="mostrarFormulario" 
+    (didDismiss)="cerrarFormulario()">
+
     <ng-template>
+
       <ion-header>
         <ion-toolbar>
           <ion-title>Nuevo control</ion-title>
@@ -86,21 +69,47 @@
       </ion-header>
 
       <ion-content class="ion-padding">
-        <ion-item>
-          <ion-label position="floating">Nombre del control</ion-label>
-          <ion-input [(ngModel)]="nuevoControl.nombre"></ion-input>
-        </ion-item>
 
-        <ion-item>
-          <ion-label position="floating">Fecha</ion-label>
-          <ion-datetime [(ngModel)]="nuevoControl.fecha"></ion-datetime>
-        </ion-item>
+        <form [formGroup]="form" (ngSubmit)="guardarControl()">
 
-        <ion-button expand="block" class="confirm-btn" (click)="guardarControl()">
-          Guardar control
-        </ion-button>
+          <!-- Nombre -->
+          <ion-item>
+            <ion-label position="floating">Nombre del control</ion-label>
+            <ion-input formControlName="nombre"></ion-input>
+          </ion-item>
+
+          <div class="validators" *ngIf="form.controls.nombre.invalid && form.controls.nombre.touched">
+            <div *ngIf="form.controls.nombre.errors?.['required']">
+              Nombre requerido
+            </div>
+          </div>
+
+          <!-- Fecha -->
+          <ion-item>
+            <ion-label position="floating">Fecha</ion-label>
+            <ion-datetime formControlName="fecha" presentation="date-time"></ion-datetime>
+          </ion-item>
+
+          <div class="validators" *ngIf="form.controls.fecha.invalid && form.controls.fecha.touched">
+            <div *ngIf="form.controls.fecha.errors?.['required']">
+              Fecha requerida
+            </div>
+          </div>
+
+          <!-- Guardar -->
+          <ion-button 
+            expand="full" 
+            type="submit" 
+            class="ion-margin-top"
+            [disabled]="form.invalid">
+            Guardar
+          </ion-button>
+
+        </form>
+
       </ion-content>
     </ng-template>
+
   </ion-modal>
 
 </ion-content>

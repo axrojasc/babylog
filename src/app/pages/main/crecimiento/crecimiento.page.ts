@@ -1,7 +1,9 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { Chart, registerables } from 'chart.js';
-
-Chart.register(...registerables);
+import { Component, inject, AfterViewInit } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FirebaseService } from '../../../services/firebase.service';
+import { UtilsService } from '../../../services/utils.service';
+import { firstValueFrom } from 'rxjs';
+import Chart from 'chart.js/auto';
 
 @Component({
   selector: 'app-crecimiento',
@@ -9,140 +11,130 @@ Chart.register(...registerables);
   styleUrls: ['./crecimiento.page.scss'],
   standalone: false,
 })
-export class CrecimientoPage {
-  @ViewChild('growthChart', { static: false }) growthChart!: ElementRef;
+export class CrecimientoPage implements AfterViewInit {
+
+  busqueda: string = '';
   chart: any;
 
+  form = new FormGroup({
+    peso: new FormControl('', [Validators.required]),
+    talla: new FormControl('', [Validators.required]),
+    fecha: new FormControl('', [Validators.required])
+  });
+
+  firebaseSvc: FirebaseService = inject(FirebaseService);
+  utilsSvc: UtilsService = inject(UtilsService);
+
   mostrarFormulario = false;
-  alturaActual: number | null = null;
-  fecha: string = '';
+  registros: any[] = [];
 
-  meses = [
-    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-  ];
-
-  alturas: number[] = [];
+  ngAfterViewInit() {
+    // El gráfico se creará cuando tengamos datos
+  }
 
   ngOnInit() {
-    const mesActual = new Date().getMonth();
-    for (let i = 0; i <= mesActual; i++) {
-      this.alturas.push(50 + i * 2 + Math.random() * 2); // crecimiento simulado
+    this.loadRegistros();
+  }
+
+  abrirFormulario() { this.mostrarFormulario = true; }
+  cerrarFormulario() { this.mostrarFormulario = false; this.form.reset(); }
+
+  async guardarRegistro() {
+    if (!this.form.valid) return;
+
+    const loading = await this.utilsSvc.loading();
+    await loading.present();
+
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+      const path = `users/${user.uid}/crecimiento`;
+
+      await this.firebaseSvc.addDocument(path, this.form.value);
+
+      this.utilsSvc.presentToast({
+        message: 'Registro guardado',
+        duration: 1500,
+        color: 'primary',
+        position: 'middle',
+        icon: 'checkmark-circle-outline'
+      });
+
+      this.loadRegistros();
+      this.cerrarFormulario();
+
+    } catch (error: any) {
+      console.log(error);
+      this.utilsSvc.presentToast({
+        message: error.message,
+        duration: 2500,
+        color: 'danger',
+        position: 'middle',
+        icon: 'alert-circle-outline'
+      });
+    } finally {
+      loading.dismiss();
     }
   }
 
-  ionViewDidEnter() {
-    this.generarGrafico();
+  async loadRegistros() {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const path = `users/${user.uid}/crecimiento`;
+
+      const data: any = await firstValueFrom(
+        this.firebaseSvc.getCollectionData(path)
+      );
+
+      // Ordenar por fecha ASC
+      this.registros = (data || []).sort((a: any, b: any) =>
+        new Date(a.fecha).getTime() - new Date(b.fecha).getTime()
+      );
+
+      this.generarGrafico();
+
+    } catch (error) { console.log(error); }
   }
 
   generarGrafico() {
+    if (!this.registros.length) return;
+
+    const meses = this.registros.map(r =>
+      new Date(r.fecha).toLocaleString('es-ES', { month: 'short' })
+    );
+
+    const tallas = this.registros.map(r => r.talla);
+
+    // Si ya existe otro gráfico, destruirlo para evitar errores
     if (this.chart) {
       this.chart.destroy();
     }
 
-    const ctx = this.growthChart.nativeElement.getContext('2d');
-    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(75, 192, 192, 0.4)');
-    gradient.addColorStop(1, 'rgba(75, 192, 192, 0)');
+    const canvas: any = document.getElementById('chartCrecimiento');
 
-    this.chart = new Chart(ctx, {
+    this.chart = new Chart(canvas, {
       type: 'line',
       data: {
-        labels: this.meses.slice(0, this.alturas.length),
+        labels: meses,
         datasets: [
           {
-            label: 'Altura del bebé (cm)',
-            data: this.alturas,
-            fill: true,
-            backgroundColor: gradient,
-            borderColor: 'rgba(75, 192, 192, 1)',
+            label: 'Talla (cm)',
+            data: tallas,
+            fill: false,
             borderWidth: 3,
-            tension: 0.3,
-            pointRadius: 6,
-            pointHoverRadius: 8,
-            pointBackgroundColor: '#4CAF50',
-            pointBorderColor: '#fff',
-          },
-        ],
+            tension: 0.2
+          }
+        ]
       },
       options: {
         responsive: true,
         plugins: {
-          legend: {
-            display: true,
-            labels: {
-              color: '#333',
-              font: {
-                size: 14,
-                weight: 'bold',
-              },
-            },
-          },
-          title: {
-            display: true,
-            text: 'Evolución del Crecimiento por Mes',
-            color: '#222',
-            font: {
-              size: 18,
-              weight: 'bold',
-            },
-            padding: { top: 10, bottom: 20 },
-          },
+          legend: { display: true }
         },
         scales: {
-          x: {
-            ticks: {
-              color: '#444',
-              font: {
-                size: 13,
-                weight: 500, // ✅ corregido aquí
-              },
-              autoSkip: false,
-              maxRotation: 45,
-              minRotation: 45,
-            },
-            grid: {
-              color: 'rgba(0, 0, 0, 0.05)',
-            },
-          },
-          y: {
-            beginAtZero: false,
-            title: {
-              display: true,
-              text: 'Altura (cm)',
-              color: '#333',
-              font: { size: 14 },
-            },
-            ticks: {
-              color: '#444',
-            },
-            grid: {
-              color: 'rgba(0, 0, 0, 0.05)',
-            },
-          },
-        },
-      },
+          y: { beginAtZero: false }
+        }
+      }
     });
-  }
-
-  alternarFormulario() {
-    this.mostrarFormulario = !this.mostrarFormulario;
-  }
-
-  confirmarCrecimiento() {
-    if (this.alturaActual && this.fecha) {
-      this.alturas.push(this.alturaActual);
-      this.chart.data.labels.push(this.obtenerMesDeFecha(this.fecha));
-      this.chart.update();
-
-      this.alturaActual = null;
-      this.fecha = '';
-      this.mostrarFormulario = false;
-    }
-  }
-
-  obtenerMesDeFecha(fecha: string): string {
-    const mesIndex = new Date(fecha).getMonth();
-    return this.meses[mesIndex];
   }
 }
