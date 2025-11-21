@@ -12,16 +12,15 @@ import { UtilsService } from 'src/app/services/utils.service';
 })
 export class MainPage implements OnInit {
 
-  pages = [
-    { title: 'Inicio', url: 'home', icon: 'home-outline' },
-    { title: 'Perfil', url: 'profile', icon: 'person-outline' },
-    { title: 'Sueño', url: 'sueno', icon: '' },
-    { title: 'Vacunas', url: 'vacunas', icon: '' },
-    { title: 'Controles', url: 'controles', icon: '' },
-    { title: 'Alimentación', url: 'alimentacion', icon: '' },
-    { title: 'Crecimiento', url: 'crecimiento', icon: '' },
-  ]
-
+pages = [
+  { title: 'Inicio',        url: 'home',         icon: 'home-outline' },
+  { title: 'Perfil',        url: 'profile',      icon: 'person-outline' },
+  { title: 'Sueño',         url: 'sueno',        icon: 'moon-outline' },
+  { title: 'Vacunas',       url: 'vacunas',      icon: 'medkit-outline' }, // luego lo cambiamos a jeringa si quieres
+  { title: 'Controles',     url: 'controles',    icon: 'calendar-outline' },
+  { title: 'Alimentación',  url: 'alimentacion', icon: 'restaurant-outline' },
+  { title: 'Crecimiento',   url: 'crecimiento',  icon: 'fitness-outline' },
+];
   router = inject (Router);
   currentPath: string = '';
 

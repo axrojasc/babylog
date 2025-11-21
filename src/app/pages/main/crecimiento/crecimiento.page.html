@@ -1,20 +1,9 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Crecimiento</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header [showMenu]="true" title="Crecimiento"></app-header>
 
-<ion-content class="ion-padding">
+<ion-content class="crecimiento-page ion-padding">
 
-  <!-- ✅ Botón visible -->
-  <div class="ion-text-end ion-margin-bottom">
-    <ion-button color="success" (click)="alternarFormulario()">
-      Añadir Crecimiento
-    </ion-button>
-  </div>
-
-  <!-- 📋 Formulario de ingreso -->
-  <ion-card *ngIf="mostrarFormulario" class="ion-margin-bottom">
+  <!-- Formulario de registro de crecimiento -->
+  <ion-card *ngIf="mostrarFormulario" class="crecimiento-form-card ion-margin-bottom">
     <ion-card-header>
       <ion-card-title>Registrar altura actual</ion-card-title>
     </ion-card-header>
@@ -30,16 +19,19 @@
         <ion-input type="date" [(ngModel)]="fecha"></ion-input>
       </ion-item>
 
-      <ion-button expand="block" color="success" class="ion-margin-top" (click)="confirmarCrecimiento()">
+      <ion-button
+        expand="block"
+        class="confirm-btn ion-margin-top"
+        (click)="confirmarCrecimiento()">
         Confirmar
       </ion-button>
     </ion-card-content>
   </ion-card>
 
-  <!-- 📊 Gráfico de crecimiento -->
-  <ion-card>
+  <!-- Gráfico de crecimiento -->
+  <ion-card class="crecimiento-chart-card ion-margin-top">
     <ion-card-header>
-      <ion-card-title>Gráfico de Crecimiento</ion-card-title>
+      <ion-card-title>Gráfico de crecimiento</ion-card-title>
     </ion-card-header>
 
     <ion-card-content>
@@ -47,4 +39,30 @@
     </ion-card-content>
   </ion-card>
 
+  <!-- FAB flotante para alternar formulario -->
+  <button class="fab-add" (click)="alternarFormulario()">
+    <ion-icon name="add-outline"></ion-icon>
+  </button>
+
 </ion-content>
+
+<!-- Menú inferior BabyLog -->
+<ion-footer class="bottom-nav">
+  <ion-toolbar>
+
+    <!-- Home -->
+    <ion-buttons slot="start">
+      <ion-button fill="clear" routerLink="/main/home">
+        <ion-icon name="home-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <!-- Perfil -->
+    <ion-buttons slot="end">
+      <ion-button fill="clear" routerLink="/main/profile">
+        <ion-icon name="person-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-footer>

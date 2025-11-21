@@ -1,27 +1,70 @@
-<app-header backButton="/main/home" [showMenu]="true" title="Perfil" ></app-header>
+<app-header [showMenu]="true" title="Perfil"></app-header>
 
-<ion-content class="ion-padding-top ion-text-center">
+<ion-content class="perfil-page ion-padding">
 
-  <ion-avatar>
-    <img *ngIf="user()?.image" [src]="user()?.image || 'assets/default-avatar.png'" /> <!-- arreglar -->
-    <ion-icon *ngIf="!user()?.image" class="empty-icon" name="person-circle-outline"></ion-icon>
-  </ion-avatar>
+  <!-- HEADER DEL PERFIL -->
+  <div class="perfil-header">
 
-  <ion-button class="photo-btn" (click)="takeImage()" mode="ios" size="small" shape="round">
-    <ion-icon name="camera-outline"></ion-icon>
-  </ion-button>
+    <ion-avatar class="perfil-avatar">
+      <img *ngIf="user()?.image" [src]="user()?.image" />
+      <ion-icon *ngIf="!user()?.image" class="empty-icon" name="person-circle-outline"></ion-icon>
+    </ion-avatar>
 
-  <h2>{{user().name}}</h2>
-  <div>Tutor</div>
+    <!-- Botón cámara sobre el avatar -->
+    <button class="photo-btn" (click)="takeImage()">
+      <ion-icon name="camera-outline"></ion-icon>
+    </button>
 
-  <ion-item button detail>
-    <ion-icon color="primary" slot="start" name="person-outline"></ion-icon>
-    <ion-label>Editar perfil</ion-label>
-  </ion-item>
+    <h2 class="perfil-name">{{ user().name }}</h2>
+    <p class="perfil-role">Tutor BabyLog</p>
+  </div>
 
-  <ion-item button detail>
-    <ion-icon color="primary" slot="start" name="document-outline"></ion-icon>
-    <ion-label>Terminos & Condiciones</ion-label>
-  </ion-item>
+  <!-- CARD: INFO DEL TUTOR -->
+  <ion-card class="perfil-card">
+    <ion-card-header>
+      <ion-card-title>Información del tutor</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="none">
+        <ion-item class="perfil-item">
+          <ion-icon slot="start" name="mail-outline"></ion-icon>
+          <ion-label>
+            <h3>Correo</h3>
+            <p>{{ user().email || 'Sin correo registrado' }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item class="perfil-item">
+          <ion-icon slot="start" name="shield-checkmark-outline"></ion-icon>
+          <ion-label>
+            <h3>Rol</h3>
+            <p>Tutor principal</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- CARD: OPCIONES -->
+  <ion-card class="perfil-card opciones-card">
+    <ion-card-header>
+      <ion-card-title>Configuración</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="none">
+
+        <ion-item button detail class="perfil-item">
+          <ion-icon slot="start" name="person-outline"></ion-icon>
+          <ion-label>Editar perfil</ion-label>
+        </ion-item>
+
+        <ion-item button detail class="perfil-item">
+          <ion-icon slot="start" name="document-text-outline"></ion-icon>
+          <ion-label>Términos &amp; Condiciones</ion-label>
+        </ion-item>
+
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
 
 </ion-content>

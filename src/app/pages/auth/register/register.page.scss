@@ -4,8 +4,59 @@ img {
   height: auto;
   margin-bottom: 15px;
   border-radius: 50%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto; 
+
 }
 
 h2 {
     color:#ce5585
+}
+
+ion-content {
+  --background: #f5f8fc;
+}
+
+
+.d-flex-center {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+
+.auth-form {
+  width: 100%;
+  height: 100vh;             
+  max-width: 100%;
+  margin: 0;
+  border-radius: 0;          
+  box-shadow: none;
+  padding: 32px 24px;
+  background: linear-gradient(135deg, #e3f2ff, #fdfbff);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;   
+}
+
+.register-title {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #d1789c; 
+  margin-bottom: 16px;
+}
+
+.validators {
+  font-size: 0.78rem;
+  color: #b00020;
+  margin: -4px 0 6px 4px;
+}
+
+.submit {
+  --border-radius: 999px;
+  --background: #d1789c;
+  --background-activated: #b75f83;
+  margin-top: 16px;
 }
