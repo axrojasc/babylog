@@ -1,3 +1,26 @@
-.ion-text {
-    color: #ce5585
+/* Fondo general del contenido */
+ion-content {
+  --background: #f5f8fc; /* el color que quieras de fondo */
+}
+
+/* Contenedor que envuelve al form */
+.d-flex-center {
+  height: 100%;          /* ocupar toda la altura del ion-content */
+  width: 100%;
+  margin: 0;
+}
+
+/* La "tarjeta" de login */
+.auth-form {
+  width: 100%;
+  height: 100vh;         /* llena la pantalla completa */
+  max-width: 100%;       /* sin límite de ancho */
+  margin: 0;
+  border-radius: 0;      /* sin esquinas redondeadas (si quieres full full) */
+  box-shadow: none;      /* sin sombra de card */
+  padding: 32px 24px;    /* espacio interno */
+  background: linear-gradient(135deg, #e3f2ff, #fdfbff); /* mismo degradado que usas */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* centra el contenido verticalmente */
 }
