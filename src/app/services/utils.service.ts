@@ -2,11 +2,15 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoadingController, ModalController, ModalOptions, ToastController, ToastOptions } from '@ionic/angular';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UtilsService {
+  setInLocalStorage(arg0: string, user: User) {
+    throw new Error('Method not implemented.');
+  }
  
   loadingCtrl = inject(LoadingController);
   toastCtrl = inject(ToastController);

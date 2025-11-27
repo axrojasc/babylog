@@ -2,69 +2,96 @@
 
 <ion-content class="perfil-page ion-padding">
 
-  <!-- HEADER DEL PERFIL -->
-  <div class="perfil-header">
+  <!-- CARD TUTOR -->
+  <div class="tutor-card">
 
-    <ion-avatar class="perfil-avatar">
-      <img *ngIf="user()?.image" [src]="user()?.image" />
-      <ion-icon *ngIf="!user()?.image" class="empty-icon" name="person-circle-outline"></ion-icon>
-    </ion-avatar>
+    <!-- Zona avatar tutor -->
+    <div class="tutor-avatar">
+      <div class="avatar-circle" (click)="takeImage()">
+        <img *ngIf="user()?.image" [src]="user()?.image" />
+        <ion-icon *ngIf="!user()?.image" name="person-circle-outline"></ion-icon>
+      </div>
 
-    <!-- Botón cámara sobre el avatar -->
-    <button class="photo-btn" (click)="takeImage()">
-      <ion-icon name="camera-outline"></ion-icon>
-    </button>
+      <button class="change-photo-btn" (click)="takeImage()">
+        Cambiar foto de perfil
+      </button>
+    </div>
 
-    <h2 class="perfil-name">{{ user().name }}</h2>
-    <p class="perfil-role">Tutor BabyLog</p>
+    <!-- Datos tutor + botones -->
+    <div class="tutor-info">
+
+      <div class="tutor-text">
+        <p><span>Nombre:</span> {{ user()?.name || '-' }}</p>
+        <p><span>Apellido:</span> {{ user()?.lastName || '-' }}</p>
+        <p><span>Rol:</span> Tutor BabyLog</p>
+        <p><span>Teléfono:</span> {{ user()?.phone || '-' }}</p>
+        <p><span>Correo:</span> {{ user()?.email || '-' }}</p>
+      </div>
+
+      <div class="tutor-actions">
+        <ion-button size="small" mode="ios" (click)="editTutorProfile()">
+          <ion-icon name="create-outline" slot="start"></ion-icon>
+          Editar perfil
+        </ion-button>
+
+        <ion-button size="small" mode="ios" color="secondary" (click)="addBaby()">
+          <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+          Agregar bebé
+        </ion-button>
+      </div>
+
+    </div>
   </div>
 
-  <!-- CARD: INFO DEL TUTOR -->
-  <ion-card class="perfil-card">
-    <ion-card-header>
-      <ion-card-title>Información del tutor</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list lines="none">
-        <ion-item class="perfil-item">
-          <ion-icon slot="start" name="mail-outline"></ion-icon>
-          <ion-label>
-            <h3>Correo</h3>
-            <p>{{ user().email || 'Sin correo registrado' }}</p>
-          </ion-label>
-        </ion-item>
+  <!-- GRID DE BEBÉS -->
+  <h2 class="section-title" *ngIf="babies?.length">Bebés registrados</h2>
 
-        <ion-item class="perfil-item">
-          <ion-icon slot="start" name="shield-checkmark-outline"></ion-icon>
-          <ion-label>
-            <h3>Rol</h3>
-            <p>Tutor principal</p>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
+  <div class="babies-grid" *ngIf="babies?.length; else noBabies">
+    <div class="baby-card" *ngFor="let baby of babies">
+      <!-- Foto bebé -->
+      <div class="baby-avatar" (click)="changeBabyPhoto(baby)">
+        <div class="avatar-circle">
+          <img *ngIf="baby.photo" [src]="baby.photo" />
+          <ion-icon *ngIf="!baby.photo" name="image-outline"></ion-icon>
+        </div>
+        <p class="change-photo-label">Cambiar foto de perfil</p>
+      </div>
 
-  <!-- CARD: OPCIONES -->
-  <ion-card class="perfil-card opciones-card">
-    <ion-card-header>
-      <ion-card-title>Configuración</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list lines="none">
+      <!-- Datos bebé -->
+      <div class="baby-info">
+        <p><span>Nombre del bebé:</span> {{ baby.firstName || '-' }}</p>
+        <p><span>Apellido del bebé:</span> {{ baby.lastName || '-' }}</p>
+        <p><span>Fecha de nacimiento:</span> {{ baby.birthDate || '-' }}</p>
+        <p><span>Peso:</span> {{ baby.weight || '-' }}</p>
+        <p><span>Estatura:</span> {{ baby.height || '-' }}</p>
+        <p><span>Tipo de sangre:</span> {{ baby.bloodType || '-' }}</p>
+        <p><span>Alergias:</span> {{ baby.allergies || '-' }}</p>
+      </div>
 
-        <ion-item button detail class="perfil-item">
-          <ion-icon slot="start" name="person-outline"></ion-icon>
-          <ion-label>Editar perfil</ion-label>
-        </ion-item>
+      <!-- Botón actualizar bebé -->
+      <div class="baby-actions">
+        <ion-button mode="ios" size="small" (click)="editBaby(baby)">
+          Actualizar datos
+        </ion-button>
+      </div>
+    </div>
+  </div>
 
-        <ion-item button detail class="perfil-item">
-          <ion-icon slot="start" name="document-text-outline"></ion-icon>
-          <ion-label>Términos &amp; Condiciones</ion-label>
-        </ion-item>
+  <ng-template #noBabies>
+    <p class="empty-text">
+      Aún no tienes bebés registrados. Usa el botón <strong>“Agregar bebé”</strong> para crear uno.
+    </p>
+  </ng-template>
 
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
+  <!-- BOTONES INFERIORES -->
+  <div class="bottom-buttons">
+    <ion-button expand="block" mode="ios" fill="outline" (click)="goToTerms()">
+      Términos &amp; condiciones de uso
+    </ion-button>
+
+    <ion-button expand="block" mode="ios" fill="outline" (click)="goToHelpDesk()">
+      Mesa de ayuda
+    </ion-button>
+  </div>
 
 </ion-content>
