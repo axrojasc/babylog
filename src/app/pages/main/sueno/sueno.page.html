@@ -1,10 +1,13 @@
-<app-header backButton="/main/home" title="Sueño"></app-header>
+<app-header [showMenu]="true" title="Sueño"></app-header>
 
 <ion-content class="ion-padding">
 
-  <ion-searchbar placeholder="Buscar registro..." [(ngModel)]="busqueda"></ion-searchbar>
+  <h2>Registros de Sueño 😴</h2>
 
-  <ion-button expand="block" class="ion-margin-top" (click)="abrirFormulario()">Añadir registro</ion-button>
+  <p>Aqui podras encontrar los registros de sueño de tu bebé, ctualizalo diariamente para lograr generar un reporte mas
+    completo</p>
+
+  <ion-searchbar placeholder="Buscar registro..." [(ngModel)]="busqueda"></ion-searchbar>
 
   <!-- 🔵 GRAFICO ABAJO DEL BOTÓN -->
   <div class="grafico-container">
@@ -14,8 +17,8 @@
   <!-- 🔵 LISTADO ABAJO DEL GRAFICO -->
   <ion-list>
     <ion-item *ngFor="let r of registros">
-      Inicio: {{ r.inicio | date:'dd/MM/yyyy HH:mm' }} - 
-      Fin: {{ r.fin | date:'dd/MM/yyyy HH:mm' }} - 
+      Inicio: {{ r.inicio | date:'dd/MM/yyyy HH:mm' }} -
+      Fin: {{ r.fin | date:'dd/MM/yyyy HH:mm' }} -
       Duración: {{ r.duracion }} hrs
     </ion-item>
   </ion-list>
@@ -63,7 +66,7 @@
     </ng-template>
   </ion-modal>
 
-  <!-- 🟣 Botón flotante Instagram-style -->
+
   <button class="fab-add" (click)="abrirFormulario()">
     <ion-icon name="add-outline"></ion-icon>
   </button>

@@ -2,14 +2,11 @@
 
 <ion-content class="alimentacion-page ion-padding">
 
-  <!-- Título del historial -->
-  <h2 class="section-title">Historial de comidas</h2>
+    <h2>Registros de Alimentacion 🍽</h2>
+
+  <p>Registra las kalorias y valor nutricional de los alimentos de tu bebé.</p>
 
   <ion-searchbar placeholder="Buscar alimento..." [(ngModel)]="busqueda"></ion-searchbar>
-
-  <ion-button expand="block" class="ion-margin-top" (click)="abrirFormulario()">
-    Añadir registro
-  </ion-button>
 
   <ion-list>
     <ion-item *ngFor="let r of registros">
