@@ -4,12 +4,25 @@
   gap: 16px;
 }
 
-h2 {
+h2{
+  text-decoration: underline;
   text-align: center;
-  margin-top: 10px;
-  color: var(--ion-color-primary);
+  color:#ce5585;
+  margin-top: 20px;
 }
 
+h4{
+  text-align: center;
+  color:#ce5585;
+  margin-top: 20px;
+}
+
+p{
+  text-align: center;
+  color: #666;
+  margin: 10px 20px;
+  font-size: 16px;
+}
 /* Fondo general */
 .controles-page {
   --background: #f5f8fc;
@@ -25,7 +38,8 @@ h2 {
 
 /* Cards generales */
 .controles-card {
-  border-radius: 22px;
+  border-radius: 15px;
+  border-color: #d1789c 1px;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
 }
 
@@ -41,7 +55,7 @@ h2 {
 }
 
 .pendientes-card {
-  background: linear-gradient(135deg, #fff9e3, #ffffff);
+  background: linear-gradient(135deg, #7c6203, #ffffff);
 }
 
 /* Ítems de controles */

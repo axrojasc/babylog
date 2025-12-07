@@ -68,7 +68,7 @@ export class FirebaseService {
   }
 
   // ---------- Storage ----------
-  async uploadImage(path: string, data_url: string) {
+  async uploadImage(path: string, data_url: string, dataUrl: string) {
     await uploadString(ref(getStorage(), path), data_url, 'data_url');
     return getDownloadURL(ref(getStorage(), path));
   }

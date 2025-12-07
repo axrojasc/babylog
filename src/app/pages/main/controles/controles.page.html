@@ -1,4 +1,4 @@
-<app-header [showMenu]="true" title="Registro de Controles"></app-header>
+<app-header [showMenu]="true" title="Controles"></app-header>
 
 <ion-content class="ion-padding">
 
@@ -11,7 +11,7 @@
   <div class="grid">
 
     <div>
-      <h2>Controles realizados</h2>
+      <h4>Controles realizados</h4>
 
       <ion-list *ngIf="controlesRealizados.length > 0; else noRealizados">
         <ion-item *ngFor="let control of controlesRealizados">
@@ -33,7 +33,7 @@
     </div>
 
     <div>
-      <h2>Controles pendientes</h2>
+      <h4>Controles pendientes</h4>
 
       <ion-list *ngIf="controlesPendientes.length > 0; else noPendientes">
         <ion-item *ngFor="let control of controlesPendientes">
@@ -104,6 +104,10 @@
     </ng-template>
 
   </ion-modal>
+
+    <button class="fab-add" (click)="abrirFormulario()">
+    <ion-icon name="add-outline"></ion-icon>
+  </button>
 
 </ion-content>
 

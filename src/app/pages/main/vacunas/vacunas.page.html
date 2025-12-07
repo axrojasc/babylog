@@ -1,12 +1,12 @@
-<app-header [showMenu]="true" title="Registro de Vacunas"></app-header>
+<app-header [showMenu]="true" title="Vacunas"></app-header>
 
 <ion-content class="vacunas-page ion-padding">
 
-  <ion-searchbar placeholder="Buscar vacuna..." [(ngModel)]="busqueda"></ion-searchbar>
+    <h2>Registros de vacunas 💉</h2>
 
-  <ion-button expand="block" class="ion-margin-top" (click)="abrirFormulario()">
-    Añadir registro
-  </ion-button>
+  <p>Aqui podras registrar las vacunas de tu bebé, mantener un odern y registo claro de estas mismas ❤</p>
+
+  <ion-searchbar placeholder="Buscar vacuna..." [(ngModel)]="busqueda"></ion-searchbar>
 
   <ion-grid>
     <ion-row>
@@ -102,6 +102,10 @@
       </ion-content>
     </ng-template>
   </ion-modal>
+
+    <button class="fab-add" (click)="abrirFormulario()">
+    <ion-icon name="add-outline"></ion-icon>
+  </button>
 
 </ion-content>
 
