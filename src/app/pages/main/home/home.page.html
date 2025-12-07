@@ -2,6 +2,9 @@
 
 <ion-content class="home-dashboard">
 
+  <h1>Bienvenido {{ user()?.name }}</h1>
+  <p>¿Cómo está tu bebé hoy?</p>
+
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
@@ -41,31 +44,35 @@
     <div class="hero-bottom">
       <div class="hero-stat">
         <span class="hero-stat-label">Sueño promedio</span>
-        <span class="hero-stat-value">9h</span>
+        <span class="hero-stat-value">{{ ultimoSueno || 'Sin registro' }}</span>
       </div>
       <div class="hero-stat">
         <span class="hero-stat-label">Próxima vacuna</span>
-        <span class="hero-stat-value">12 Nov</span>
+        <span class="hero-stat-value">
+          {{ proximaVacunaNombre ? proximaVacunaNombre + ' - ' : '' }}{{ proximaVacuna || 'Sin registro' }}
+        </span>
       </div>
       <div class="hero-stat">
         <span class="hero-stat-label">Próximo control</span>
-        <span class="hero-stat-value">25 Nov</span>
+        <span class="hero-stat-value">
+          {{ proximoControlNombre ? proximoControlNombre + ' - ' : '' }}{{ proximoControl || 'Sin registro' }}
+        </span>
       </div>
       <div class="hero-stat">
-        <span class="hero-stat-label">Peso actual</span>
-        <span class="hero-stat-value">3.5 kg</span>
+        <span class="hero-stat-label">Última comida</span>
+        <span class="hero-stat-value">
+          {{ ultimaComida ? ultimaComida + ' - ' : '' }}{{ ultimaComidaCantidad || 'Sin registro' }}
+        </span>
       </div>
     </div>
   </div>
 
-  <!-- Si no hay perfil todavía -->
   <div class="hero-empty" *ngIf="!loading && !image.length">
     <h2>Bienvenido a BabyLog</h2>
     <p>Crea el perfil de tu bebé para comenzar a registrar su crecimiento.</p>
     <ion-button (click)="addUpdateImage()">Crear perfil</ion-button>
   </div>
 
-  <!-- DASHBOARD PRINCIPAL -->
   <div class="section-header" *ngIf="!loading">
     <h3>Resumen de hoy</h3>
   </div>
@@ -81,8 +88,8 @@
               <ion-icon name="moon-outline"></ion-icon>
             </div>
             <div class="kpi-title">Sueño</div>
-            <div class="kpi-value">9h</div>
-            <div class="kpi-subtitle">Promedio diario</div>
+            <div class="kpi-value">{{ ultimoSueno || 'Sin registro' }}</div>
+            <div class="kpi-subtitle">Última duración</div>
           </ion-card-content>
         </ion-card>
       </ion-col>
@@ -95,7 +102,9 @@
               <ion-icon name="bandage-outline"></ion-icon>
             </div>
             <div class="kpi-title">Vacunas</div>
-            <div class="kpi-value">12 Nov</div>
+            <div class="kpi-value">
+              {{ proximaVacunaNombre ? proximaVacunaNombre + ' - ' : '' }}{{ proximaVacuna || 'Sin registro' }}
+            </div>
             <div class="kpi-subtitle">Próxima dosis</div>
           </ion-card-content>
         </ion-card>
@@ -109,22 +118,42 @@
               <ion-icon name="calendar-outline"></ion-icon>
             </div>
             <div class="kpi-title">Controles</div>
-            <div class="kpi-value">25 Nov</div>
+            <div class="kpi-value">
+              {{ proximoControlNombre ? proximoControlNombre + ' - ' : '' }}{{ proximoControl || 'Sin registro' }}
+            </div>
             <div class="kpi-subtitle">Próximo control</div>
           </ion-card-content>
         </ion-card>
       </ion-col>
 
-      <!-- Peso -->
+      <!-- Alimentación -->
       <ion-col size="6">
         <ion-card class="kpi-card kpi-peso" (click)="goToPeso()">
           <ion-card-content>
             <div class="kpi-icon">
-              <ion-icon name="fitness-outline"></ion-icon>
+              <ion-icon name="fast-food-outline"></ion-icon>
             </div>
-            <div class="kpi-title">Peso</div>
-            <div class="kpi-value">3.5 kg</div>
-            <div class="kpi-subtitle">Último registro</div>
+            <div class="kpi-title">Alimentación</div>
+            <div class="kpi-value">
+              {{ ultimaComida ? ultimaComida + ' - ' : '' }}{{ ultimaComidaCantidad || 'Sin registro' }}
+            </div>
+            <div class="kpi-subtitle">Última comida</div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <!-- Crecimiento -->
+      <ion-col size="6">
+        <ion-card class="kpi-card kpi-altura" (click)="goToCrecimiento()">
+          <ion-card-content>
+            <div class="kpi-icon">
+              <ion-icon name="accessibility-outline"></ion-icon>
+            </div>
+            <div class="kpi-title">Crecimiento</div>
+            <div class="kpi-value">
+              {{ ultimoPeso ? ultimoPeso + ' kg - ' : '' }}{{ ultimaAltura || 'Sin registro' }}{{ ultimaAltura ? ' cm' : '' }}
+            </div>
+            <div class="kpi-subtitle">Peso y altura</div>
           </ion-card-content>
         </ion-card>
       </ion-col>

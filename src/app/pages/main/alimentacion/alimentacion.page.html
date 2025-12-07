@@ -2,39 +2,86 @@
 
 <ion-content class="alimentacion-page ion-padding">
 
-  <!-- Título del historial -->
+  <!-- DASHBOARD -->
+  <div class="dashboard">
+
+    <div class="dash-card">
+      <h3>Calorías hoy</h3>
+      <p>{{ totalCaloriasDia }} kcal</p>
+    </div>
+
+    <div class="dash-card">
+      <h3>Gramos consumidos</h3>
+      <p>{{ totalGramosDia }} g</p>
+    </div>
+
+    <div class="dash-card">
+      <h3>Comidas hoy</h3>
+      <p>{{ totalComidasDia }}</p>
+    </div>
+
+    <div class="dash-card">
+      <h3>Última comida</h3>
+      <p>{{ ultimaComida }}</p>
+    </div>
+
+  </div>
+
+  <!-- GRÁFICO SEMANAL -->
+  <h2 class="section-title">Analítica semanal</h2>
+  <div class="grafico-container">
+    <canvas id="graficoSemanal"></canvas>
+  </div>
+
+  <!-- BUSCADOR -->
+  <ion-searchbar placeholder="Buscar alimento..." [(ngModel)]="busqueda"></ion-searchbar>
+    <h2>Registros de Alimentacion 🍽</h2>
+
+  <p>Registra las kalorias y valor nutricional de los alimentos de tu bebé.</p>
+
+  <!-- HISTORIAL -->
   <h2 class="section-title">Historial de comidas</h2>
 
-  <ion-searchbar placeholder="Buscar alimento..." [(ngModel)]="busqueda"></ion-searchbar>
+  <div *ngIf="(registros?.length || 0) === 0" class="empty-text">
+    No hay comidas registradas aún.
+  </div>
 
-  <ion-button expand="block" class="ion-margin-top" (click)="abrirFormulario()">
-    Añadir registro
-  </ion-button>
+  <!-- GRID DE 2 COLUMNAS -->
+  <div class="grid-meals">
 
-  <ion-list>
-    <ion-item *ngFor="let r of registros">
-      <ion-label>
-        <h2>{{ getDiaSemana(r.fecha) }} - {{ getHora(r.fecha) }}</h2>
-        <p>Alimento: {{ r.alimento }}</p>
-        <p>Cantidad: {{ r.cantidad }}</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+    <div class="card-meal" *ngFor="let r of filtrar(registros)">
 
-  <ng-template #sinComidas>
-    <p class="empty-text">No hay comidas registradas aún.</p>
-  </ng-template>
+      <div class="card-left">
+        <div class="meal-time">{{ getDiaSemana(r.fecha) }} - {{ getHora(r.fecha) }}</div>
+        <div class="meal-name">{{ r.alimento }}</div>
 
-  <!-- FAB flotante para añadir comida -->
-  <button class="fab-add" (click)="abrirFormulario()">
-    <ion-icon name="add-outline"></ion-icon>
-  </button>
+        <div class="meal-meta">
+          {{ r.categoria }} • {{ r.cantidad }} g
+          <span *ngIf="r.calorias !== null">• {{ r.calorias }} kcal</span>
+        </div>
+      </div>
 
+      <div class="card-actions">
+        <ion-button fill="clear" color="warning" (click)="abrirFormulario(r)">
+          <ion-icon name="create-outline"></ion-icon>
+        </ion-button>
+
+        <ion-button fill="clear" color="danger" (click)="eliminarRegistro(r.id)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- MODAL -->
   <ion-modal [isOpen]="mostrarFormulario" (didDismiss)="cerrarFormulario()">
     <ng-template>
+
       <ion-header>
         <ion-toolbar>
-          <ion-title>Nuevo registro</ion-title>
+          <ion-title>{{ registroEditandoId ? 'Editar registro' : 'Nuevo registro' }}</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="cerrarFormulario()">Cerrar</ion-button>
           </ion-buttons>
@@ -45,32 +92,50 @@
 
         <form [formGroup]="form" (ngSubmit)="guardarRegistro()">
 
+          <!-- ALIMENTO -->
           <ion-item>
             <ion-label position="floating">Alimento</ion-label>
-            <ion-input formControlName="alimento"></ion-input>
+            <ion-input formControlName="alimento" (ionInput)="buscarAlimento($event)"></ion-input>
           </ion-item>
-          <div class="validators" *ngIf="form.controls['alimento'].errors && form.controls['alimento'].touched">
-            <div *ngIf="form.controls['alimento'].errors?.['required']">Alimento requerido</div>
-          </div>
 
+          <!-- RESULTADOS API -->
+          <ion-list *ngIf="resultadosAPI.length > 0" class="resultados-api">
+            <ion-item button *ngFor="let item of resultadosAPI" (click)="seleccionarAlimento(item)">
+              {{ item.name }} • {{ item.calories }} kcal • {{ item.serving_size_g ?? 100 }} g
+            </ion-item>
+          </ion-list>
+
+          <!-- CANTIDAD -->
           <ion-item>
-            <ion-label position="floating">Cantidad</ion-label>
-            <ion-input formControlName="cantidad"></ion-input>
+            <ion-label position="floating">Cantidad (gramos)</ion-label>
+            <ion-input formControlName="cantidad" type="number"></ion-input>
           </ion-item>
-          <div class="validators" *ngIf="form.controls['cantidad'].errors && form.controls['cantidad'].touched">
-            <div *ngIf="form.controls['cantidad'].errors?.['required']">Cantidad requerida</div>
-          </div>
 
+          <!-- CATEGORÍA -->
+          <ion-item>
+            <ion-label position="floating">Categoría</ion-label>
+            <ion-select formControlName="categoria">
+              <ion-select-option value="Desayuno">Desayuno</ion-select-option>
+              <ion-select-option value="Almuerzo">Almuerzo</ion-select-option>
+              <ion-select-option value="Cena">Cena</ion-select-option>
+              <ion-select-option value="Snack">Snack</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <!-- CALORÍAS -->
+          <ion-item>
+            <ion-label position="floating">Calorías (kcal)</ion-label>
+            <ion-input formControlName="calorias" type="number"></ion-input>
+          </ion-item>
+
+          <!-- FECHA -->
           <ion-item>
             <ion-label position="floating">Fecha</ion-label>
             <ion-datetime formControlName="fecha" presentation="date-time"></ion-datetime>
           </ion-item>
-          <div class="validators" *ngIf="form.controls['fecha'].errors && form.controls['fecha'].touched">
-            <div *ngIf="form.controls['fecha'].errors?.['required']">Fecha requerida</div>
-          </div>
 
           <ion-button expand="full" type="submit" [disabled]="form.invalid" class="ion-margin-top">
-            Guardar
+            {{ registroEditandoId ? 'Actualizar' : 'Guardar' }}
           </ion-button>
 
         </form>
@@ -80,24 +145,3 @@
   </ion-modal>
 
 </ion-content>
-
-<!-- Menú inferior BabyLog -->
-<ion-footer class="bottom-nav">
-  <ion-toolbar>
-
-    <!-- Home -->
-    <ion-buttons slot="start">
-      <ion-button fill="clear" routerLink="/main/home">
-        <ion-icon name="home-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-
-    <!-- Perfil -->
-    <ion-buttons slot="end">
-      <ion-button fill="clear" routerLink="/main/profile">
-        <ion-icon name="person-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-
-  </ion-toolbar>
-</ion-footer>

@@ -8,6 +8,8 @@ import { AlimentacionPageRoutingModule } from './alimentacion-routing.module';
 
 import { AlimentacionPage } from './alimentacion.page';
 import { SharedModule } from 'src/app/shared/shared-module';
+import { HttpClientModule } from '@angular/common/http';
+
 
 @NgModule({
   imports: [
@@ -15,7 +17,8 @@ import { SharedModule } from 'src/app/shared/shared-module';
     FormsModule,
     IonicModule,
     AlimentacionPageRoutingModule,
-    SharedModule
+    SharedModule,
+    HttpClientModule,
   ],
   declarations: [AlimentacionPage]
 })

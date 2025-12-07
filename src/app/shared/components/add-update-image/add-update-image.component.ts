@@ -45,17 +45,20 @@ export class AddUpdateImageComponent  implements OnInit {
     }
   }
 
-  async createImage() {
+async createImage() {
 
-      let path = `users/${this.user.uid}/image`
+  let path = `users/${this.user.uid}/image`;
 
-      const loading = await this.utilsSvc.loading();
-      await loading.present();
+  const loading = await this.utilsSvc.loading();
+  await loading.present();
 
-      let dataUrl = this.form.value.image;
-      let imagePath = `${this.user.uid}/${Date.now()}`;
-      let imageUrl = await this.firebaseSvc.uploadImage(imagePath, dataUrl);
-      this.form.controls.image.setValue(imageUrl);
+  const dataUrl = this.form.value.image as string;   // aseguramos string
+  const imagePath = `${this.user.uid}/${Date.now()}`;
+
+  // ⬇️ ahora con 3 parámetros
+  const imageUrl = await this.firebaseSvc.uploadImage(path, imagePath, dataUrl);
+  this.form.controls.image.setValue(imageUrl);
+
 
       delete this.form.value.id
 
@@ -88,20 +91,23 @@ export class AddUpdateImageComponent  implements OnInit {
     
   }
 
-  async updateImage() {
+async updateImage() {
 
-      let path = `users/${this.user.uid}/image/${this.image.id}`
+  let path = `users/${this.user.uid}/image/${this.image.id}`;
 
-      const loading = await this.utilsSvc.loading();
-      await loading.present();
+  const loading = await this.utilsSvc.loading();
+  await loading.present();
 
-      // --- si cambio la imagen, subir la nueva y obt la url ---
-      if(this.form.value.image !== this.image.image){
-      let dataUrl = this.form.value.image;
-      let imagePath = await this.firebaseSvc.getFilePath(this.image.image);
-      let imageUrl = await this.firebaseSvc.uploadImage(imagePath, dataUrl);
-      this.form.controls.image.setValue(imageUrl);
-      }
+  // --- si cambió la imagen, subir la nueva y obtener la url ---
+  if (this.form.value.image !== this.image.image) {
+    const dataUrl = this.form.value.image as string;
+    const imagePath = await this.firebaseSvc.getFilePath(this.image.image);
+
+    // ⬇️ igual que antes, 3 parámetros
+    const imageUrl = await this.firebaseSvc.uploadImage(path, imagePath, dataUrl);
+    this.form.controls.image.setValue(imageUrl);
+  }
+
 
       delete this.form.value.id
 

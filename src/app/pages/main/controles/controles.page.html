@@ -1,31 +1,29 @@
-<app-header [showMenu]="true" title="Registro de Controles"></app-header>
+<app-header [showMenu]="true" title="Controles"></app-header>
 
 <ion-content class="ion-padding">
 
-  <!-- Buscador -->
-  <ion-searchbar 
-    placeholder="Buscar control..." 
-    [(ngModel)]="busqueda">
-  </ion-searchbar>
+  <ion-searchbar placeholder="Buscar control..." [(ngModel)]="busqueda"></ion-searchbar>
 
-  <!-- Botón agregar -->
-  <ion-button 
-    class="ion-margin-top" 
-    expand="block" 
-    (click)="abrirFormulario()">
+  <ion-button class="ion-margin-top" expand="block" (click)="abrirFormulario()">
     Añadir Control
   </ion-button>
 
   <div class="grid">
 
-    <!-- CONTROLES REALIZADOS -->
     <div>
-      <h2>Controles realizados</h2>
+      <h4>Controles realizados</h4>
 
       <ion-list *ngIf="controlesRealizados.length > 0; else noRealizados">
         <ion-item *ngFor="let control of controlesRealizados">
-          {{ control.nombre }} — 
-          {{ control.fecha | date:'dd/MM/yyyy HH:mm' }}
+          {{ control.nombre }} — {{ control.fecha | date:'dd/MM/yyyy HH:mm' }}
+          <ion-buttons slot="end">
+            <ion-button fill="clear" color="warning" (click)="abrirFormulario(control)">
+              <ion-icon name="create-outline"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" color="danger" (click)="eliminarControl(control.id)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
         </ion-item>
       </ion-list>
 
@@ -34,14 +32,20 @@
       </ng-template>
     </div>
 
-    <!-- CONTROLES PENDIENTES -->
     <div>
-      <h2>Controles pendientes</h2>
+      <h4>Controles pendientes</h4>
 
       <ion-list *ngIf="controlesPendientes.length > 0; else noPendientes">
         <ion-item *ngFor="let control of controlesPendientes">
-          {{ control.nombre }} —
-          {{ control.fecha | date:'dd/MM/yyyy HH:mm' }}
+          {{ control.nombre }} — {{ control.fecha | date:'dd/MM/yyyy HH:mm' }}
+          <ion-buttons slot="end">
+            <ion-button fill="clear" color="warning" (click)="abrirFormulario(control)">
+              <ion-icon name="create-outline"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" color="danger" (click)="eliminarControl(control.id)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
         </ion-item>
       </ion-list>
 
@@ -52,16 +56,12 @@
 
   </div>
 
-  <!-- MODAL -->
-  <ion-modal 
-    [isOpen]="mostrarFormulario" 
-    (didDismiss)="cerrarFormulario()">
-
+  <ion-modal [isOpen]="mostrarFormulario" (didDismiss)="cerrarFormulario()">
     <ng-template>
 
       <ion-header>
         <ion-toolbar>
-          <ion-title>Nuevo control</ion-title>
+          <ion-title>{{ controlEditandoId ? 'Editar control' : 'Nuevo control' }}</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="cerrarFormulario()">Cerrar</ion-button>
           </ion-buttons>
@@ -72,7 +72,6 @@
 
         <form [formGroup]="form" (ngSubmit)="guardarControl()">
 
-          <!-- Nombre -->
           <ion-item>
             <ion-label position="floating">Nombre del control</ion-label>
             <ion-input formControlName="nombre"></ion-input>
@@ -84,7 +83,6 @@
             </div>
           </div>
 
-          <!-- Fecha -->
           <ion-item>
             <ion-label position="floating">Fecha</ion-label>
             <ion-datetime formControlName="fecha" presentation="date-time"></ion-datetime>
@@ -96,13 +94,8 @@
             </div>
           </div>
 
-          <!-- Guardar -->
-          <ion-button 
-            expand="full" 
-            type="submit" 
-            class="ion-margin-top"
-            [disabled]="form.invalid">
-            Guardar
+          <ion-button expand="full" type="submit" class="ion-margin-top" [disabled]="form.invalid">
+            {{ controlEditandoId ? 'Actualizar' : 'Guardar' }}
           </ion-button>
 
         </form>
@@ -112,25 +105,23 @@
 
   </ion-modal>
 
+    <button class="fab-add" (click)="abrirFormulario()">
+    <ion-icon name="add-outline"></ion-icon>
+  </button>
+
 </ion-content>
 
-<!-- Menú inferior común -->
 <ion-footer class="bottom-nav">
   <ion-toolbar>
-
-    <!-- Home -->
     <ion-buttons slot="start">
       <ion-button fill="clear" routerLink="/main/home">
         <ion-icon name="home-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-
-    <!-- Perfil -->
     <ion-buttons slot="end">
       <ion-button fill="clear" routerLink="/main/profile">
         <ion-icon name="person-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-
   </ion-toolbar>
 </ion-footer>

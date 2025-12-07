@@ -1,4 +1,4 @@
-<app-header backButton="/main/home" title="Crecimiento"></app-header>
+<app-header [showMenu]="true" title="Crecimiento"></app-header>
 
 <ion-content class="ion-padding">
 
@@ -7,15 +7,23 @@
     <canvas id="chartCrecimiento"></canvas>
   </div>
 
-  <ion-searchbar placeholder="Buscar registro..." [(ngModel)]="busqueda"></ion-searchbar>
+  <h2>Registros de Crecimiento 📈</h2>
+  <p>Aqui podras encontrar los registros de crecimiento de tu bebé, ctualizalo regularmente para lograr generar un reporte mas
+    completo</p>
 
-  <ion-button expand="block" class="ion-margin-top" (click)="abrirFormulario()">
-    Añadir registro
-  </ion-button>
+  <ion-searchbar placeholder="Buscar registro..." [(ngModel)]="busqueda"></ion-searchbar>
 
   <ion-list>
     <ion-item *ngFor="let r of registros">
       Peso: {{ r.peso }} kg - Talla: {{ r.talla }} cm - Fecha: {{ r.fecha | date:'dd/MM/yyyy' }}
+      <ion-buttons slot="end">
+        <ion-button fill="clear" (click)="abrirFormulario(r)">
+          <ion-icon name="create-outline"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" (click)="eliminarRegistro(r.id)">
+          <ion-icon name="trash-outline" color="danger"></ion-icon>
+        </ion-button>
+      </ion-buttons>
     </ion-item>
   </ion-list>
 
@@ -23,7 +31,7 @@
     <ng-template>
       <ion-header>
         <ion-toolbar>
-          <ion-title>Nuevo registro</ion-title>
+          <ion-title>{{ registroEditando ? 'Editar registro' : 'Nuevo registro' }}</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="cerrarFormulario()">Cerrar</ion-button>
           </ion-buttons>
@@ -49,7 +57,7 @@
           </ion-item>
 
           <ion-button expand="full" type="submit" [disabled]="form.invalid" class="ion-margin-top">
-            Guardar
+            {{ registroEditando ? 'Actualizar' : 'Guardar' }}
           </ion-button>
 
         </form>
@@ -64,23 +72,18 @@
 
 </ion-content>
 
-<!-- Menú inferior BabyLog -->
 <ion-footer class="bottom-nav">
   <ion-toolbar>
-
-    <!-- Home -->
     <ion-buttons slot="start">
       <ion-button fill="clear" routerLink="/main/home">
         <ion-icon name="home-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
 
-    <!-- Perfil -->
     <ion-buttons slot="end">
       <ion-button fill="clear" routerLink="/main/profile">
         <ion-icon name="person-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-
   </ion-toolbar>
 </ion-footer>

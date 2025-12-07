@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { FirebaseService } from '../../../services/firebase.service';
 import { UtilsService } from '../../../services/utils.service';
 import { firstValueFrom } from 'rxjs';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-vacunas',
@@ -17,11 +18,12 @@ export class VacunasPage {
   form = new FormGroup({
     nombre: new FormControl('', [Validators.required]),
     fecha: new FormControl('', [Validators.required]),
-    proximaDosis: new FormControl('')   // AHORA OPCIONAL
+    proximaDosis: new FormControl('')
   });
 
   firebaseSvc: FirebaseService = inject(FirebaseService);
   utilsSvc: UtilsService = inject(UtilsService);
+  alertCtrl: AlertController = inject(AlertController);
 
   mostrarFormulario = false;
 
@@ -29,17 +31,30 @@ export class VacunasPage {
   pendientes: any[] = [];
   realizadas: any[] = [];
 
+  // Variable para editar
+  registroEditandoId: string | null = null;
+
   ngOnInit() {
     this.loadRegistros();
   }
 
-  abrirFormulario() {
+  abrirFormulario(registro?: any) {
     this.mostrarFormulario = true;
+
+    if (registro) {
+      this.form.patchValue({
+        nombre: registro.nombre,
+        fecha: registro.fecha,
+        proximaDosis: registro.proximaDosis || null
+      });
+      this.registroEditandoId = registro.id;
+    }
   }
 
   cerrarFormulario() {
     this.mostrarFormulario = false;
     this.form.reset();
+    this.registroEditandoId = null;
   }
 
   async guardarRegistro() {
@@ -52,19 +67,34 @@ export class VacunasPage {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       const path = `users/${user.uid}/vacunas`;
 
-      // Convertir proximaDosis vacía a null
       const formValue = { ...this.form.value };
       if (!formValue.proximaDosis) formValue.proximaDosis = null;
 
-      await this.firebaseSvc.addDocument(path, formValue);
+      if (this.registroEditandoId) {
+        // Editar registro existente
+        const registroPath = `${path}/${this.registroEditandoId}`;
+        await this.firebaseSvc.updateDocument(registroPath, formValue);
 
-      this.utilsSvc.presentToast({
-        message: 'Registro guardado correctamente',
-        duration: 1500,
-        color: 'primary',
-        position: 'middle',
-        icon: 'checkmark-circle-outline'
-      });
+        this.utilsSvc.presentToast({
+          message: 'Registro actualizado correctamente',
+          duration: 1500,
+          color: 'primary',
+          position: 'middle',
+          icon: 'checkmark-circle-outline'
+        });
+
+      } else {
+        // Agregar nuevo registro
+        await this.firebaseSvc.addDocument(path, formValue);
+
+        this.utilsSvc.presentToast({
+          message: 'Registro guardado correctamente',
+          duration: 1500,
+          color: 'primary',
+          position: 'middle',
+          icon: 'checkmark-circle-outline'
+        });
+      }
 
       this.loadRegistros();
       this.cerrarFormulario();
@@ -84,6 +114,39 @@ export class VacunasPage {
     }
   }
 
+  // --- ELIMINAR CON CONFIRMACIÓN ---
+  async eliminarRegistro(id: string) {
+    const alert = await this.alertCtrl.create({
+      header: 'Confirmar',
+      message: '¿Deseas eliminar este registro?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: async () => {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const path = `users/${user.uid}/vacunas/${id}`;
+            await this.firebaseSvc.deleteDocument(path);
+            this.utilsSvc.presentToast({
+              message: 'Registro eliminado',
+              duration: 1500,
+              color: 'danger',
+              position: 'middle',
+              icon: 'trash-outline'
+            });
+            this.loadRegistros();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
   async loadRegistros() {
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -101,7 +164,6 @@ export class VacunasPage {
     }
   }
 
-  // Clasificación igual que Controles
   clasificarRegistros() {
     const hoy = new Date().setHours(0, 0, 0, 0);
 
