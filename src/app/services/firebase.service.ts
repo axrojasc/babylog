@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { getFirestore, setDoc, doc, getDoc, addDoc, collection, collectionData, query, updateDoc, deleteDoc } from '@angular/fire/firestore';
@@ -36,6 +36,12 @@ export class FirebaseService {
 
   updateUser(displayName: string) {
     return updateProfile(getAuth().currentUser!, { displayName });
+  }
+
+  // ----- Autenticación social -----
+  signInWithGoogle() {
+    const provider = new GoogleAuthProvider();
+    return signInWithPopup(getAuth(), provider);
   }
 
   // ---------- Base de Datos ----------

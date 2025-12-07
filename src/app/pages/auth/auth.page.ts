@@ -100,8 +100,44 @@ export class AuthPage {
       }).finally(() => {
         loading.dismiss();
       })
-    
+
     }
 
   }
+
+  async authWithGoogle() {
+    const loading = await this.utilsSvc.loading();
+    await loading.present();
+
+    this.firebaseSvc.signInWithGoogle().then(res => {
+
+      console.log('Google User:', res);
+
+      const user = {
+        uid: res.user.uid,
+        name: res.user.displayName,
+        email: res.user.email,
+        avatar: res.user.photoURL
+      };
+
+      this.utilsSvc.saveInLocalStorage('user', user);
+      this.utilsSvc.routerLink('/main/home');
+
+    }).catch(error => {
+      console.log(error);
+
+      this.utilsSvc.presentToast({
+        message: error.message,
+        duration: 2500,
+        color: 'danger',
+        position: 'middle',
+        icon: 'alert-circle-outline'
+      })
+
+    }).finally(() => {
+      loading.dismiss();
+    })
+
+  }
+
 }
