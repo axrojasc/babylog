@@ -1,10 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, AfterViewInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { FirebaseService } from '../../../services/firebase.service';
 import { UtilsService } from '../../../services/utils.service';
 import { firstValueFrom } from 'rxjs';
 import { AlertController } from '@ionic/angular';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Chart, ChartConfiguration } from 'chart.js';
 
 @Component({
   selector: 'app-alimentacion',
@@ -31,6 +32,7 @@ export class AlimentacionPage implements OnInit {
   http = inject(HttpClient);
 
   mostrarFormulario = false;
+  mostrarHistorial = false;
   registros: any[] = [];
 
   registroEditandoId: string | null = null;
@@ -52,12 +54,19 @@ export class AlimentacionPage implements OnInit {
   weeklyCaloriesTotal: number = 0;
   weeklyCaloriesAvg: number = 0;
 
+  grafico: Chart | null = null;
+
   // API CaloriesNinja
   caloriesApiUrl = 'https://api.calorieninjas.com/v1/nutrition?query=';
   caloriesApiKey = '3qrYUM1nPjedZMvSSwErOg==rJXHdmOEffvti6Xs';
 
   ngOnInit() {
     this.loadRegistros();
+  }
+
+  // 🔹 Botón historial
+  toggleHistorial() {
+    this.mostrarHistorial = !this.mostrarHistorial;
   }
 
   abrirFormulario(registro?: any) {
@@ -90,7 +99,6 @@ export class AlimentacionPage implements OnInit {
     this.resultadosAPI = [];
   }
 
-  // 🔎 Buscar alimento en la API
   async buscarAlimento(event: any) {
     const query = event?.target?.value ?? '';
     if (!query || query.trim().length < 2) {
@@ -114,7 +122,6 @@ export class AlimentacionPage implements OnInit {
     }
   }
 
-  // 🟩 Seleccionar alimento desde la API
   seleccionarAlimento(item: any) {
     const nombre = item.name ?? item.food_name ?? item.item_name ?? item.item ?? '';
     const calorias = item.calories ?? item.kcal ?? null;
@@ -129,7 +136,6 @@ export class AlimentacionPage implements OnInit {
     this.resultadosAPI = [];
   }
 
-  // 💾 Guardar / Editar
   async guardarRegistro() {
     if (!this.form.valid) return;
 
@@ -168,7 +174,6 @@ export class AlimentacionPage implements OnInit {
     }
   }
 
-  // 🗑 Eliminar
   async eliminarRegistro(id: string) {
     const alert = await this.alertCtrl.create({
       header: 'Confirmar',
@@ -189,7 +194,6 @@ export class AlimentacionPage implements OnInit {
     await alert.present();
   }
 
-  // 📥 Cargar registros
   async loadRegistros() {
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -210,12 +214,15 @@ export class AlimentacionPage implements OnInit {
 
       this.procesarDashboardYSemana();
 
+      // 🔹 Inicializar o actualizar gráfico
+      if (!this.grafico) this.initChart();
+      else this.updateChart();
+
     } catch (error) {
       console.error(error);
     }
   }
 
-  // 📊 Dashboard + Semana
   procesarDashboardYSemana() {
     const hoy = new Date();
     const hoyKey = this._formatDateKey(hoy);
@@ -234,9 +241,7 @@ export class AlimentacionPage implements OnInit {
       }
     }
 
-    if (this.registros.length) {
-      this.lastMeal = this.registros[0].alimento;
-    }
+    if (this.registros.length) this.lastMeal = this.registros[0].alimento;
 
     const week = [];
     for (let i = 6; i >= 0; i--) {
@@ -246,10 +251,7 @@ export class AlimentacionPage implements OnInit {
     }
 
     this.weeklyData = week.map(w => {
-      const recs = this.registros.filter(
-        r => this._formatDateKey(new Date(r.fecha)) === w.key
-      );
-
+      const recs = this.registros.filter(r => this._formatDateKey(new Date(r.fecha)) === w.key);
       return {
         date: w.dateObj.toISOString(),
         calories: recs.reduce((s, r) => s + (r.calorias || 0), 0),
@@ -260,7 +262,6 @@ export class AlimentacionPage implements OnInit {
     this.weeklyCaloriesTotal = this.weeklyData.reduce((s, d) => s + d.calories, 0);
     this.weeklyCaloriesAvg = Math.round((this.weeklyCaloriesTotal / 7) * 100) / 100;
 
-    // 👉 Alias en español para tu HTML
     this.totalCaloriasDia = this.totalCaloriesToday;
     this.totalGramosDia = this.totalGramsToday;
     this.totalComidasDia = this.totalMealsToday;
@@ -283,8 +284,39 @@ export class AlimentacionPage implements OnInit {
 
   filtrar(lista: any[]) {
     if (!this.busqueda.trim()) return lista;
-    return lista.filter(i =>
-      i.alimento.toLowerCase().includes(this.busqueda.toLowerCase())
-    );
+    return lista.filter(i => i.alimento.toLowerCase().includes(this.busqueda.toLowerCase()));
   }
+
+  // 🔹 GRÁFICO
+  initChart() {
+    const ctx: any = document.getElementById('graficoSemanal');
+    if (!ctx) return;
+
+    const config: ChartConfiguration = {
+      type: 'bar',
+      data: {
+        labels: this.weeklyData.map(d => new Date(d.date).toLocaleDateString('es-CL', { weekday: 'short' })),
+        datasets: [{
+          label: 'Calorías',
+          data: this.weeklyData.map(d => d.calories),
+          backgroundColor: '#d1789c'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    };
+
+    this.grafico = new Chart(ctx, config);
+  }
+
+  updateChart() {
+    if (!this.grafico) return;
+    this.grafico.data.labels = this.weeklyData.map(d => new Date(d.date).toLocaleDateString('es-CL', { weekday: 'short' }));
+    this.grafico.data.datasets![0].data = this.weeklyData.map(d => d.calories);
+    this.grafico.update();
+  }
+
 }

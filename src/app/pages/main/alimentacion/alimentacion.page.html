@@ -33,49 +33,67 @@
     <canvas id="graficoSemanal"></canvas>
   </div>
 
-  <!-- BUSCADOR -->
-  <ion-searchbar placeholder="Buscar alimento..." [(ngModel)]="busqueda"></ion-searchbar>
-    <h2>Registros de Alimentacion 🍽</h2>
 
-  <p>Registra las kalorias y valor nutricional de los alimentos de tu bebé.</p>
+
+  <!-- BOTÓN AGREGAR ALIMENTO -->
+  <ion-button 
+    class="ion-margin-top" 
+    expand="block" 
+    (click)="abrirFormulario()">
+    Agregar alimento ➕
+  </ion-button>
+
+  <!-- BOTÓN MOSTRAR/OCULTAR HISTORIAL -->
+  <ion-button 
+    expand="block" 
+    color="medium" 
+    class="ion-margin-top"
+    (click)="toggleHistorial()">
+    {{ mostrarHistorial ? 'Ocultar historial' : 'Ver historial completo 📚' }}
+  </ion-button>
 
   <!-- HISTORIAL -->
-  <h2 class="section-title">Historial de comidas</h2>
 
-  <div *ngIf="(registros?.length || 0) === 0" class="empty-text">
-    No hay comidas registradas aún.
-  </div>
+  
+  <div *ngIf="mostrarHistorial">
+      <!-- BUSCADOR -->
+  <ion-searchbar placeholder="Buscar alimento..." [(ngModel)]="busqueda"></ion-searchbar>
 
-  <!-- GRID DE 2 COLUMNAS -->
-  <div class="grid-meals">
+    <h2 class="section-title">Historial de comidas</h2>
 
-    <div class="card-meal" *ngFor="let r of filtrar(registros)">
+    <div *ngIf="(registros?.length || 0) === 0" class="empty-text">
+      No hay comidas registradas aún.
+    </div>
 
-      <div class="card-left">
-        <div class="meal-time">{{ getDiaSemana(r.fecha) }} - {{ getHora(r.fecha) }}</div>
-        <div class="meal-name">{{ r.alimento }}</div>
-
-        <div class="meal-meta">
-          {{ r.categoria }} • {{ r.cantidad }} g
-          <span *ngIf="r.calorias !== null">• {{ r.calorias }} kcal</span>
+    <!-- GRID DE 2 COLUMNAS -->
+    <div class="grid-meals">
+      <div class="card-meal" *ngFor="let r of filtrar(registros)">
+        <div class="card-left">
+          <div class="meal-time">{{ getDiaSemana(r.fecha) }} - {{ getHora(r.fecha) }}</div>
+          <div class="meal-name">{{ r.alimento }}</div>
+          <div class="meal-meta">
+            {{ r.categoria }} • {{ r.cantidad }} g
+            <span *ngIf="r.calorias !== null">• {{ r.calorias }} kcal</span>
+          </div>
         </div>
+
+        <div class="card-actions">
+          <ion-button fill="clear" color="warning" (click)="abrirFormulario(r)">
+            <ion-icon name="create-outline"></ion-icon>
+          </ion-button>
+
+          <ion-button fill="clear" color="danger" (click)="eliminarRegistro(r.id)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
+
       </div>
-
-      <div class="card-actions">
-        <ion-button fill="clear" color="warning" (click)="abrirFormulario(r)">
-          <ion-icon name="create-outline"></ion-icon>
-        </ion-button>
-
-        <ion-button fill="clear" color="danger" (click)="eliminarRegistro(r.id)">
-          <ion-icon name="trash-outline"></ion-icon>
-        </ion-button>
-      </div>
-
     </div>
 
   </div>
+  <!-- FIN DEL HISTORIAL -->
 
-  <!-- MODAL -->
+  <!-- MODAL FORMULARIO -->
   <ion-modal [isOpen]="mostrarFormulario" (didDismiss)="cerrarFormulario()">
     <ng-template>
 
