@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { FirebaseService } from '../../../services/firebase.service';
 import { UtilsService } from '../../../services/utils.service';
 import { firstValueFrom } from 'rxjs';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-controles',
@@ -21,28 +22,39 @@ export class ControlesPage {
 
   firebaseSvc: FirebaseService = inject(FirebaseService);
   utilsSvc: UtilsService = inject(UtilsService);
+  alertCtrl: AlertController = inject(AlertController);
 
   mostrarFormulario = false;
 
   controlesRealizados: any[] = [];
   controlesPendientes: any[] = [];
 
+  controlEditandoId: string | null = null;
+
   ngOnInit() {
     this.loadControles();
   }
 
-  abrirFormulario() {
+  abrirFormulario(control?: any) {
     this.mostrarFormulario = true;
+
+    if (control) {
+      this.form.patchValue({
+        nombre: control.nombre,
+        fecha: control.fecha
+      });
+      this.controlEditandoId = control.id;
+    }
   }
 
   cerrarFormulario() {
     this.mostrarFormulario = false;
     this.form.reset();
+    this.controlEditandoId = null;
   }
 
   async guardarControl() {
     if (this.form.valid) {
-
       const loading = await this.utilsSvc.loading();
       await loading.present();
 
@@ -50,18 +62,29 @@ export class ControlesPage {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         const path = `users/${user.uid}/controles`;
 
-        await this.firebaseSvc.addDocument(path, {
-          ...this.form.value,
-          realizado: false
-        });
+        if (this.controlEditandoId) {
+          const controlPath = `${path}/${this.controlEditandoId}`;
+          await this.firebaseSvc.updateDocument(controlPath, { ...this.form.value });
 
-        this.utilsSvc.presentToast({
-          message: 'Control guardado correctamente',
-          duration: 1500,
-          color: 'primary',
-          position: 'middle',
-          icon: 'checkmark-circle-outline'
-        });
+          this.utilsSvc.presentToast({
+            message: 'Control actualizado correctamente',
+            duration: 1500,
+            color: 'primary',
+            position: 'middle',
+            icon: 'checkmark-circle-outline'
+          });
+
+        } else {
+          await this.firebaseSvc.addDocument(path, { ...this.form.value, realizado: false });
+
+          this.utilsSvc.presentToast({
+            message: 'Control guardado correctamente',
+            duration: 1500,
+            color: 'primary',
+            position: 'middle',
+            icon: 'checkmark-circle-outline'
+          });
+        }
 
         this.loadControles();
         this.cerrarFormulario();
@@ -82,15 +105,44 @@ export class ControlesPage {
     }
   }
 
-  // ✔ Método actualizado con la estructura correcta de updateDocument
+  // ---------------------------------------
+  // Eliminación con confirmación
+  // ---------------------------------------
+  async eliminarControl(controlId: string) {
+    const alert = await this.alertCtrl.create({
+      header: 'Confirmar eliminación',
+      message: '¿Deseas eliminar este registro?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: async () => {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const path = `users/${user.uid}/controles/${controlId}`;
+
+            await this.firebaseSvc.deleteDocument(path);
+            this.utilsSvc.presentToast({
+              message: 'Control eliminado',
+              duration: 1500,
+              color: 'danger',
+              position: 'middle',
+              icon: 'trash-outline'
+            });
+
+            this.loadControles();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
   async marcarComoRealizado(docId: string, data: any) {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const path = `users/${user.uid}/controles/${docId}`;
-
-    return this.firebaseSvc.updateDocument(path, {
-      ...data,
-      realizado: true
-    });
+    return this.firebaseSvc.updateDocument(path, { ...data, realizado: true });
   }
 
   async loadControles() {
@@ -98,27 +150,18 @@ export class ControlesPage {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       const path = `users/${user.uid}/controles`;
 
-      // ✔ Obtener controles
-      const controles: any[] = await firstValueFrom(
-        this.firebaseSvc.getCollectionData(path)
-      );
+      const controles: any[] = await firstValueFrom(this.firebaseSvc.getCollectionData(path));
 
       const ahora = new Date().getTime();
 
-      // ✔ Revisión de vencimiento
       for (const c of controles) {
         const fechaControl = new Date(c.fecha).getTime();
-
         if (!c.realizado && fechaControl < ahora) {
           await this.marcarComoRealizado(c.id, c);
         }
       }
 
-      // ✔ Recargar con la información ya actualizada
-      const controlesActualizados: any[] = await firstValueFrom(
-        this.firebaseSvc.getCollectionData(path)
-      );
-
+      const controlesActualizados: any[] = await firstValueFrom(this.firebaseSvc.getCollectionData(path));
       this.controlesPendientes = controlesActualizados.filter(c => !c.realizado);
       this.controlesRealizados = controlesActualizados.filter(c => c.realizado);
 
@@ -126,5 +169,4 @@ export class ControlesPage {
       console.log(error);
     }
   }
-
 }

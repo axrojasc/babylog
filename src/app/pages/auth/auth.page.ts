@@ -80,7 +80,7 @@ export class AuthPage {
 
         this.utilsSvc.presentToast({
           message: `Te damos la bienvenida ${user.name}`,
-          duration: 1500,
+          duration: 2000,
           color: 'primary',
           position: 'middle',
           icon: 'person-circle-outline'
