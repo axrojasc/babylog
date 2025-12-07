@@ -1,140 +1,196 @@
-ion-avatar {
-    width: 140px;
-    height: 140px;
-    margin: 0 auto;
-}
-
-.photo-btn {
-    position: relative;
-    bottom: 25px;
-}
-
-h2 {
-    margin-bottom: 0;
-}
-
-ion-item {
-    --padding-top: 15px;
-}
-
-.empty-icon {
-    font-size: 140px;
-    opacity: 30%;
-}
-
-/* Fondo general */
+/* Fondo general similar al home */
 .perfil-page {
   --background: #f5f8fc;
+  padding: 0 0 16px 0;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* Header del perfil (avatar + nombre) */
-.perfil-header {
+/* CARD PRINCIPAL DEL TUTOR (estilo hero-card) */
+.tutor-card {
+  margin: 16px;
+  border-radius: 24px;
+  padding: 18px 16px 14px;
+  background: linear-gradient(135deg, #e3f2ff, #fdfbff);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: row;
+}
+
+/* Avatar tutor, parecido al hero-avatar */
+.tutor-avatar {
+  margin-right: 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
-  margin-bottom: 20px;
 }
 
-/* Avatar principal */
-.perfil-avatar {
-  width: 130px;
-  height: 130px;
+.avatar-circle {
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
-  border: 4px solid #ffffff;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  border: 3px solid #ffffff;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
   overflow: hidden;
-  background: #ffffff;
+  background: #e3f2ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.perfil-avatar img {
+.avatar-circle img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.empty-icon {
-  font-size: 6rem;
-  color: #c5c5c5;
+.avatar-circle ion-icon {
+  font-size: 3.2rem;
+  color: #1f3b57;
 }
 
-/* Botón cámara sobre el avatar */
-.photo-btn {
-  position: absolute;
-  bottom: 8px;
-  right: calc(50% - 65px);
-  transform: translateY(50%);
-  background: #d1789c;
+.change-photo-btn {
+  margin-top: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
   border: none;
-  border-radius: 50%;
-  width: 42px;
-  height: 42px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1565c0;
+}
+
+/* Info tutor, similar a hero-info */
+.tutor-info {
+  flex: 1;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.photo-btn ion-icon {
-  color: #ffffff;
-  font-size: 1.3rem;
-}
-
-/* Nombre + rol */
-.perfil-name {
-  margin-top: 28px;
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #1f3b57;
-}
-
-.perfil-role {
-  font-size: 0.95rem;
-  color: #7ca1b1;
-  margin-top: -4px;
-}
-
-/* Cards generales */
-.perfil-card {
-  border-radius: 22px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-  background: #ffffff;
-  margin-bottom: 16px;
-}
-
-.perfil-card ion-card-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #1f3b57;
-}
-
-/* Items dentro de las cards */
-.perfil-item {
-  border-radius: 14px;
-  margin-bottom: 8px;
-  --background: transparent;
-}
-
-.perfil-item ion-icon {
-  font-size: 1.4rem;
-  color: #64b6ac;
-}
-
-.perfil-item h3 {
+.tutor-text p {
   margin: 0;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #1f3b57;
+  font-size: 0.85rem;
+  color: #6c7b8a;
 }
 
-.perfil-item p {
+.tutor-text span {
+  font-weight: 600;
+  color: #243447;
+}
+
+/* Botones editar / agregar bebé, estilo hero-actions */
+.tutor-actions {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tutor-update {
+  margin-top: 6px;
+}
+
+/* Título sección bebés */
+.section-title {
+  padding: 4px 18px 0;
+  margin: 10px 0 4px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #243447;
+}
+
+/* GRID de bebés (cards tipo KPI) */
+.babies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px;
+  padding: 0 8px 8px;
+}
+
+/* Cada bebé como una KPI card */
+.baby-card {
+  border-radius: 20px;
+  margin: 4px;
+  background: #ffffff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  padding: 12px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.baby-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Avatar bebé */
+.baby-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.baby-avatar .avatar-circle {
+  width: 72px;
+  height: 72px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.baby-avatar ion-icon {
+  font-size: 2rem;
+  color: #1565c0;
+}
+
+.change-photo-label {
+  font-size: 0.72rem;
+  margin-top: 4px;
+  color: #6c7b8a;
+}
+
+/* Info del bebé, estilo texto suave */
+.baby-info p {
   margin: 0;
   font-size: 0.8rem;
-  color: #6a7685;
+  color: #6c7b8a;
 }
 
-/* Card de configuración con fondo suave */
-.opciones-card {
-  background: linear-gradient(135deg, #ffeef4, #ffffff);
+.baby-info span {
+  font-weight: 600;
+  color: #243447;
+}
+
+/* Botón actualizar bebé */
+.baby-actions {
+  margin-top: 6px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.empty-text {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #6d6d6d;
+  margin: 16px 18px;
+}
+
+/* Botones inferiores (Términos / Mesa de ayuda) */
+.bottom-buttons {
+  margin: 10px 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Responsive: mismo comportamiento que el hero del home */
+@media (max-width: 600px) {
+  .tutor-card {
+    flex-direction: column;
+  }
+
+  .tutor-avatar {
+    margin-right: 0;
+    margin-bottom: 8px;
+  }
 }
