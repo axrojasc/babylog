@@ -1,124 +1,62 @@
-  h2{
-  text-decoration: underline;
+/* DASHBOARD */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.dash-card {
+  background: white;
+  padding: 14px;
+  border-radius: 12px;
   text-align: center;
-  color:#ce5585;
-  margin-top: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
-p{
-  text-align: center;
-  color: #666;
-  margin: 10px 20px;
-  font-size: 16px;
+.dash-icon {
+  font-size: 32px;
+  color: #4a66ff;
+  margin-bottom: 4px;
 }
 
-ion-item {
-  --border-radius: 10px;
-  margin-bottom: 10px;
-}
-
-ion-modal {
-  --height: 80%;
-  --border-radius: 16px;
-}
-
-ion-button {
-  
-  margin-top: 20px;
-
-}
-
-/* Fondo general */
-.alimentacion-page {
-  --background: #f5f8fc;
-  padding-bottom: 120px;
-}
-
-/* Título */
-.section-title {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #1f3b57;
-  margin-bottom: 10px;
-}
-
-/* Lista de comidas */
-.comidas-list {
-  background: transparent;
-}
-
-.comida-item {
-  margin-bottom: 8px;
-  border-radius: 16px;
-  --background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.comida-item ion-icon {
-  font-size: 1.5rem;
-  color: #64b6ac;
-}
-
-.comida-item h3 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #1f3b57;
-}
-
-.comida-item p {
-  margin: 2px 0;
-  font-size: 0.85rem;
-  color: #6a7685;
-}
-
-/* Texto vacío */
-.empty-text {
-  text-align: center;
-  font-size: 0.95rem;
-  color: #788493;
-  margin-top: 20px;
-}
-
-/* Botón guardar */
-.confirm-btn {
-  --background: #64b6ac;
-  --border-radius: 999px;
-  font-weight: 600;
-  margin-top: 20px;
-}
-
-/* FAB flotante */
-.fab-add {
-  position: fixed;
-  bottom: 65px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: #d1789c;
-  color: #64b6ac;
-  border: none;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+/* HISTORIAL (UNA DEBAJO DE OTRA) */
+.meal-list {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* TARJETAS */
+.card-meal {
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+  display: flex;
   align-items: center;
-  z-index: 999;
+  gap: 12px;
 }
 
-.fab-add ion-icon {
-  font-size: 2rem;
+/* ICONO DE CATEGORÍA */
+.meal-icon ion-icon {
+  font-size: 40px;
+  color: #ff7a00;
 }
 
-/* Menú inferior */
-.bottom-nav ion-toolbar {
-  --background: #ffffff;
-  --border-color: rgba(0, 0, 0, 0.05);
-  box-shadow: 0 -3px 12px rgba(0,0,0,0.12);
-  min-height: 56px;
+/* TEXTO */
+.meal-name {
+  font-weight: bold;
+  font-size: 1.1rem;
 }
 
-.bottom-nav ion-button[fill="clear"] {
-  --color: #1f3b57;
+.meal-meta {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.card-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 4px;
 }
