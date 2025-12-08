@@ -1,0 +1,56 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/main/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Pediatra IA</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+
+  <div class="loading-container" *ngIf="chatbotService.isLoading()">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p class="loading-text">{{ chatbotService.loadProgress() }}</p>
+    <p class="sub-text">Esto puede tardar unos minutos la primera vez.</p>
+  </div>
+
+  <div class="chat-container" *ngIf="chatbotService.isModelLoaded()">
+    
+    <div class="message bot">
+      <div class="bubble">
+        Hola, soy tu asistente pediátrico. ¿En qué puedo ayudarte hoy sobre la salud de tu bebé?
+      </div>
+    </div>
+
+    <div *ngFor="let msg of messages" class="message" [ngClass]="msg.role">
+      <div class="bubble">
+        {{ msg.content }}
+      </div>
+    </div>
+    
+    <div class="message bot" *ngIf="isGenerating">
+      <div class="bubble typing">
+        <span>.</span><span>.</span><span>.</span>
+      </div>
+    </div>
+
+  </div>
+
+</ion-content>
+
+<ion-footer *ngIf="chatbotService.isModelLoaded()">
+  <ion-toolbar>
+    <ion-item lines="none">
+      <ion-input 
+        [(ngModel)]="userInput" 
+        placeholder="Escribe tu pregunta..." 
+        (keyup.enter)="sendMessage()"
+        [disabled]="isGenerating">
+      </ion-input>
+      <ion-button slot="end" fill="clear" (click)="sendMessage()" [disabled]="!userInput || isGenerating">
+        <ion-icon name="send"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>

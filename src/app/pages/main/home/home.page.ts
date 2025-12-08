@@ -258,9 +258,12 @@ goToPeso() {
   this.router.navigate(['/main/alimentacion']);
 }
 
-goToCrecimiento() {
-  this.router.navigate(['/main/crecimiento']);
-}
+  goToSueno() { this.router.navigate(['/main/sueno']); }
+  goToVacunas() { this.router.navigate(['/main/vacunas']); }
+  goToControles() { this.router.navigate(['/main/controles']); }
+  goToPeso() { this.router.navigate(['/main/alimentacion']); }
+  goToCrecimiento() { this.router.navigate(['/main/crecimiento']); }
+  goToChatbot() { this.router.navigate(['/main/chatbot']); }
 
   // Usuario para el template
   user() {
