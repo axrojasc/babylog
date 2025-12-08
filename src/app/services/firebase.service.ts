@@ -1,12 +1,41 @@
 import { inject, Injectable } from '@angular/core';
+
+// Auth
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  sendPasswordResetEmail,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from 'firebase/auth';
 
+// Firestore
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { getFirestore, setDoc, doc, getDoc, addDoc, collection, collectionData, query, updateDoc, deleteDoc } from '@angular/fire/firestore';
+import {
+  getFirestore,
+  setDoc,
+  doc,
+  getDoc,
+  addDoc,
+  collection,
+  collectionData,
+  query,
+  updateDoc,
+  deleteDoc,
+} from '@angular/fire/firestore';
 
+// Storage
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { getStorage, uploadString, ref, getDownloadURL, deleteObject } from "firebase/storage";
+import {
+  getStorage,
+  uploadString,
+  ref,
+  getDownloadURL,
+  deleteObject,
+} from 'firebase/storage';
 
 import { UtilsService } from './utils.service';
 import { User } from 'src/app/models/user.model';
@@ -21,7 +50,10 @@ export class FirebaseService {
   storage = inject(AngularFireStorage);
   utilsSvc = inject(UtilsService);
 
-  // ---------- Autenticación ----------
+  // ----------------------------------------------------
+  //                  AUTENTICACIÓN
+  // ----------------------------------------------------
+
   getAuthInstance() {
     return getAuth();
   }
@@ -38,13 +70,26 @@ export class FirebaseService {
     return updateProfile(getAuth().currentUser!, { displayName });
   }
 
-  // ----- Autenticación social -----
+  // Google Auth
   signInWithGoogle() {
     const provider = new GoogleAuthProvider();
     return signInWithPopup(getAuth(), provider);
   }
 
-  // ---------- Base de Datos ----------
+  sendRecoveryEmail(email: string) {
+    return sendPasswordResetEmail(getAuth(), email);
+  }
+
+  signOut() {
+    getAuth().signOut();
+    localStorage.removeItem('user');
+    this.utilsSvc.routerLink('/auth');
+  }
+
+  // ----------------------------------------------------
+  //                    FIRESTORE
+  // ----------------------------------------------------
+
   setDocument(path: string, data: any) {
     return setDoc(doc(getFirestore(), path), data);
   }
@@ -57,14 +102,6 @@ export class FirebaseService {
     return deleteDoc(doc(getFirestore(), path));
   }
 
-  getCollectionData(path: string, collectionQuery?: any) {
-    const refCol = collection(getFirestore(), path);
-    return collectionData(
-      collectionQuery ? query(refCol, collectionQuery) : refCol,
-      { idField: 'id' }
-    );
-  }
-
   async getDocument(path: string) {
     return (await getDoc(doc(getFirestore(), path))).data();
   }
@@ -73,10 +110,40 @@ export class FirebaseService {
     return addDoc(collection(getFirestore(), path), data);
   }
 
-  // ---------- Storage ----------
-  async uploadImage(path: string, data_url: string, dataUrl: string) {
-    await uploadString(ref(getStorage(), path), data_url, 'data_url');
-    return getDownloadURL(ref(getStorage(), path));
+  getCollectionData(path: string, collectionQuery?: any) {
+    const refCol = collection(getFirestore(), path);
+    return collectionData(
+      collectionQuery ? query(refCol, collectionQuery) : refCol,
+      { idField: 'id' }
+    );
+  }
+
+  // ----------------------------------------------------
+  //                      STORAGE
+  // ----------------------------------------------------
+
+  /**
+   * Sube una imagen en formato DataURL a Firebase Storage.
+   * @param storagePath Carpeta destino (ej: users/UID)
+   * @param fileName Nombre del archivo (ej: profile o babies/123)
+   * @param dataUrl Imagen en base64 (data:image/jpeg...)
+   */
+  async uploadImage(storagePath: string, fileName: string, dataUrl: string): Promise<string> {
+    try {
+      const fullPath = `${storagePath}/${fileName}`; // ruta completa en Firebase
+
+      const storageRef = ref(getStorage(), fullPath);
+
+      // Subir como data_url
+      await uploadString(storageRef, dataUrl, "data_url");
+
+      // Obtener URL de descarga pública
+      return await getDownloadURL(storageRef);
+
+    } catch (error) {
+      console.error("Error subiendo imagen:", error);
+      throw error;
+    }
   }
 
   async getFilePath(url: string) {
@@ -85,17 +152,5 @@ export class FirebaseService {
 
   deleteFile(path: string) {
     return deleteObject(ref(getStorage(), path));
-  }
-
-  // ----- Enviar email para restablecer contraseña ---
-  sendRecoveryEmail(email: string) {
-    return sendPasswordResetEmail(getAuth(), email);
-  }
-
-  // ---------- Cerrar sesión ----------
-  signOut() {
-    getAuth().signOut();
-    localStorage.removeItem('user');
-    this.utilsSvc.routerLink('/auth');
   }
 }
