@@ -241,23 +241,6 @@ loadResumenVacunas(babyId: string) {
     this.router.navigate(['/profile']);
   }
 
-goToSueno() {
-  this.router.navigate(['/main/sueno']);
-}
-
-goToVacunas() {
-  this.router.navigate(['/main/vacunas']);
-}
-
-goToControles() {
-  this.router.navigate(['/main/controles']);
-}
-
-goToPeso() {
-  // página de alimentación
-  this.router.navigate(['/main/alimentacion']);
-}
-
   goToSueno() { this.router.navigate(['/main/sueno']); }
   goToVacunas() { this.router.navigate(['/main/vacunas']); }
   goToControles() { this.router.navigate(['/main/controles']); }
