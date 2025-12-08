@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { User } from 'src/app/models/user.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-profile',
@@ -15,13 +16,12 @@ export class ProfilePage implements OnInit {
   firebaseSvc = inject(FirebaseService);
   utilsSvc = inject(UtilsService);
   router = inject(Router);
+  alertCtrl = inject(AlertController);
 
-  // Lista de bebés cargados desde Firebase
+  // Arreglo de bebés para el grid
   babies: any[] = [];
 
-  ngOnInit() {}
-
-  ionViewWillEnter() {
+  ngOnInit() {
     this.loadBabies();
   }
 
@@ -43,67 +43,58 @@ export class ProfilePage implements OnInit {
           id: b.id,
           ...b
         }));
-        console.log('Bebés cargados:', this.babies);
       },
       error: (err) => {
-        console.error('Error cargando bebés:', err);
+        console.error(err);
         this.babies = [];
       }
     });
   }
 
-  // --- MARCAR BEBÉ PRINCIPAL (FAVORITO) ---
-async setFavorite(baby: any) {
-  const user = this.user();
-  if (!user) return;
+  // --- MARCAR BEBÉ COMO PRINCIPAL ---
+  async setFavorite(baby: any) {
+    const user = this.user();
+    if (!user) return;
 
-  const path = `users/${user.uid}/babies`;
+    const loading = await this.utilsSvc.loading();
+    await loading.present();
 
-  const loading = await this.utilsSvc.loading();
-  await loading.present();
+    try {
+      const path = `users/${user.uid}/babies`;
 
-  try {
-    // Poner isFavorite = true solo al seleccionado y false al resto
-    const updates = this.babies.map(b =>
-      this.firebaseSvc.updateDocument(`${path}/${b.id}`, {
-        isFavorite: b.id === baby.id
-      })
-    );
+      // Quitar favorito a todos y dejar solo uno
+      for (const b of this.babies) {
+        await this.firebaseSvc.updateDocument(`${path}/${b.id}`, {
+          isFavorite: b.id === baby.id
+        });
+      }
 
-    await Promise.all(updates);
+      this.loadBabies();
 
-    // 🟢 Guardar bebé activo en localStorage para que otras vistas lo usen
-    this.utilsSvc.setInLocalStorage('currentBaby', {
-      id: baby.id,
-      firstName: baby.firstName,
-      lastName: baby.lastName,
-      photo: baby.photo || null,
-    });
+      this.utilsSvc.presentToast({
+        message: `${baby.name} ahora es el bebé principal 💖`,
+        duration: 1500,
+        color: 'primary',
+        position: 'middle',
+        icon: 'star'
+      });
 
-    this.utilsSvc.presentToast({
-      message: 'Bebé principal actualizado',
-      color: 'success',
-      duration: 1500,
-      position: 'middle',
-    });
-
-  } catch (error) {
-    console.error(error);
-    this.utilsSvc.presentToast({
-      message: 'Error al actualizar bebé principal',
-      color: 'danger',
-      duration: 2000,
-      position: 'middle',
-    });
-  } finally {
-    loading.dismiss();
+    } catch (error) {
+      console.error(error);
+      this.utilsSvc.presentToast({
+        message: 'Error al marcar como principal',
+        duration: 1500,
+        color: 'danger'
+      });
+    } finally {
+      loading.dismiss();
+    }
   }
-}
 
   // --- FOTO PERFIL TUTOR ---
   async takeImage() {
     const user = this.user();
-    if (!user) return;
+    if (!user) { return; }
 
     const path = `users/${user.uid}`;
     const imagePath = `${user.uid}/profile`;
@@ -123,7 +114,7 @@ async setFavorite(baby: any) {
 
       await this.firebaseSvc.updateDocument(path, { image: imageUrl });
 
-      user.image = imageUrl;
+      (user as any).image = imageUrl;
       this.utilsSvc.setInLocalStorage('user', user);
 
       this.utilsSvc.presentToast({
@@ -132,7 +123,6 @@ async setFavorite(baby: any) {
         duration: 1500,
         position: 'middle',
       });
-
     } catch (error) {
       console.error(error);
       this.utilsSvc.presentToast({
@@ -149,7 +139,7 @@ async setFavorite(baby: any) {
   // --- FOTO BEBÉ ---
   async changeBabyPhoto(baby: any) {
     const user = this.user();
-    if (!user) return;
+    if (!user) { return; }
 
     const path = `users/${user.uid}/babies`;
     const imagePath = `${user.uid}/babies/${baby.id || Date.now()}`;
@@ -179,7 +169,6 @@ async setFavorite(baby: any) {
         duration: 1500,
         position: 'middle',
       });
-
     } catch (error) {
       console.error(error);
       this.utilsSvc.presentToast({
@@ -194,6 +183,7 @@ async setFavorite(baby: any) {
   }
 
   // --- NAVEGACIÓN / ACCIONES ---
+
   editTutorProfile() {
     this.router.navigate(['/edit-profile']);
   }
@@ -206,11 +196,62 @@ async setFavorite(baby: any) {
     this.router.navigate(['/edit-baby', baby.id]);
   }
 
-  goToTerms() {
-    this.router.navigate(['/terms']);
+  // ✅ POPUP MESA DE AYUDA
+  async goToHelpDesk() {
+    const alert = await this.alertCtrl.create({
+      header: 'Mesa de ayuda',
+      message: `
+        Correo de soporte:
+          soporte@babylog.cl
+          WhatsApp:
+          +56 9 1234 5678
+          Horario de atención:
+          Lunes a Viernes, 09:00 - 18:00 hrs.
+      `,
+      buttons: [
+        {
+          text: 'Cerrar',
+          role: 'cancel'
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
-  goToHelpDesk() {
-    this.router.navigate(['/help-desk']);
+  // ✅ POPUP TÉRMINOS Y CONDICIONES
+  async goToTerms() {
+    const alert = await this.alertCtrl.create({
+      header: 'Términos y condiciones',
+      message: `
+          1. Uso de la aplicación
+          BabyLog está pensada como apoyo para el registro de datos pediátricos
+          y no reemplaza en ningún caso la evaluación de un profesional de la salud.
+
+          2. Responsabilidad del usuario
+          Eres responsable de la veracidad de la información que ingresas sobre tu bebé
+          y del uso que haces de los datos mostrados por la aplicación.
+
+          3. Datos personales
+          La información registrada se utiliza solo para el funcionamiento de BabyLog
+          y no se comparte con terceros sin tu consentimiento, salvo obligación legal.
+
+          4. Seguridad
+          BabyLog implementa medidas razonables de seguridad, pero ningún sistema es
+          100% infalible. Te recomendamos usar contraseñas seguras y no compartir tu cuenta.
+
+          5. Soporte
+          Ante dudas o problemas, puedes contactar a nuestro equipo a través de la Mesa de ayuda.
+        
+      `,
+      buttons: [
+        {
+          text: 'Cerrar',
+          role: 'cancel'
+        }
+      ]
+    });
+
+    await alert.present();
   }
 }

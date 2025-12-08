@@ -45,14 +45,6 @@ const routes: Routes = [
     path: 'edit-baby',
     loadChildren: () => import('./pages/main/profile/edit-baby/edit-baby.module').then( m => m.EditBabyPageModule)
   },
-  {
-    path: 'terms',
-    loadChildren: () => import('./pages/main/profile/terms/terms.module').then( m => m.TermsPageModule)
-  },
-  {
-    path: 'help-desk',
-    loadChildren: () => import('./pages/main/profile/help-desk/help-desk.module').then( m => m.HelpDeskPageModule)
-  },
 
 ];
 
