@@ -4,7 +4,7 @@ export interface User {
   lastName?: string;
   password: string;
   email: string;
-  phone?: string;      // 👈 AGREGA ESTA LÍNEA
+  phone?: string;      
   image?: string;
   babies?: any[];
 }

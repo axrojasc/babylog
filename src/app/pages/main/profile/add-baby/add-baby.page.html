@@ -1,0 +1,67 @@
+<app-header [backButton]="true" title="Agregar bebé"></app-header>
+
+<ion-content class="ion-padding">
+
+  <h2>Nuevo bebé</h2>
+  <p class="helper-text">
+    Completa los datos básicos de tu bebé. Luego podrás actualizar más información desde el perfil.
+  </p>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+
+    <ion-list lines="full">
+
+      <ion-item>
+        <ion-label position="stacked">Nombre *</ion-label>
+        <ion-input formControlName="firstName"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Apellido *</ion-label>
+        <ion-input formControlName="lastName"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Fecha de nacimiento *</ion-label>
+        <ion-datetime
+          formControlName="birthDate"
+          presentation="date"
+          [max]="(today | date:'yyyy-MM-dd')">
+        </ion-datetime>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Peso (kg)</ion-label>
+        <ion-input type="number" formControlName="weight"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Estatura (cm)</ion-label>
+        <ion-input type="number" formControlName="height"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Tipo de sangre</ion-label>
+        <ion-input formControlName="bloodType" placeholder="Ej: A+, O-"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Alergias</ion-label>
+        <ion-textarea formControlName="allergies" autoGrow="true"></ion-textarea>
+      </ion-item>
+
+    </ion-list>
+
+    <div class="buttons">
+      <ion-button expand="block" type="submit" [disabled]="form.invalid">
+        Guardar bebé
+      </ion-button>
+
+      <ion-button expand="block" fill="outline" color="medium" type="button" (click)="cancel()">
+        Cancelar
+      </ion-button>
+    </div>
+
+  </form>
+
+</ion-content>

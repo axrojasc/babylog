@@ -2,113 +2,138 @@
 
 <ion-content class="vacunas-page ion-padding">
 
+  <!-- CONTENEDOR RESPONSIVO -->
+  <div class="vacunas-container">
+
     <h2>Registros de vacunas 💉</h2>
 
-  <p>Aqui podras registrar las vacunas de tu bebé, mantener un odern y registo claro de estas mismas ❤</p>
+    <p>Aquí podrás registrar las vacunas de tu bebé, mantener un orden y registro claro de estas mismas ❤</p>
 
-  <ion-searchbar placeholder="Buscar vacuna..." [(ngModel)]="busqueda"></ion-searchbar>
+    <ion-searchbar
+      placeholder="Buscar vacuna..."
+      [(ngModel)]="busqueda">
+    </ion-searchbar>
 
-  <ion-grid>
-    <ion-row>
+    <ion-button
+      expand="block"
+      class="ion-margin-top"
+      (click)="abrirFormulario()">
+      Registrar vacuna
+    </ion-button>
 
-      <!-- REALIZADAS -->
-      <ion-col size="6">
-        <ion-list>
-          <ion-list-header>
-            <ion-label>Realizadas</ion-label>
-          </ion-list-header>
+    <!-- GRID DE LISTAS -->
+    <ion-grid>
+      <ion-row>
 
-          <ion-item *ngFor="let r of filtrar(realizadas)">
-            <ion-label>
-              <h2>{{ r.nombre }}</h2>
-              <p>Fecha aplicada: {{ r.fecha | date:'dd/MM/yyyy' }}</p>
-              <p>Próxima dosis: {{ r.proximaDosis ? (r.proximaDosis | date:'dd/MM/yyyy') : 'N/A' }}</p>
-            </ion-label>
+        <!-- REALIZADAS -->
+        <ion-col size="12" sizeMd="6">
+          <ion-list>
+            <ion-list-header>
+              <ion-label>Realizadas</ion-label>
+            </ion-list-header>
+
+            <ion-item *ngFor="let r of filtrar(realizadas)">
+              <ion-label>
+                <h2>{{ r.nombre }}</h2>
+                <p>Fecha aplicada: {{ r.fecha | date:'dd/MM/yyyy' }}</p>
+                <p>Próxima dosis: {{ r.proximaDosis ? (r.proximaDosis | date:'dd/MM/yyyy') : 'N/A' }}</p>
+              </ion-label>
+
+              <ion-buttons slot="end">
+                <ion-button fill="clear" color="warning" (click)="abrirFormulario(r)">
+                  <ion-icon name="create-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" color="danger" (click)="eliminarRegistro(r.id)">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+            </ion-item>
+
+          </ion-list>
+        </ion-col>
+
+        <!-- PENDIENTES -->
+        <ion-col size="12" sizeMd="6">
+          <ion-list>
+            <ion-list-header>
+              <ion-label>Pendientes</ion-label>
+            </ion-list-header>
+
+            <ion-item *ngFor="let r of filtrar(pendientes)">
+              <ion-label>
+                <h2>{{ r.nombre }}</h2>
+                <p>Fecha aplicada: {{ r.fecha | date:'dd/MM/yyyy' }}</p>
+                <p>Próxima dosis: {{ r.proximaDosis ? (r.proximaDosis | date:'dd/MM/yyyy') : 'N/A' }}</p>
+              </ion-label>
+
+              <ion-buttons slot="end">
+                <ion-button fill="clear" color="warning" (click)="abrirFormulario(r)">
+                  <ion-icon name="create-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" color="danger" (click)="eliminarRegistro(r.id)">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+            </ion-item>
+
+          </ion-list>
+        </ion-col>
+
+      </ion-row>
+    </ion-grid>
+
+    <!-- MODAL -->
+    <ion-modal [isOpen]="mostrarFormulario" (didDismiss)="cerrarFormulario()">
+      <ng-template>
+
+        <ion-header>
+          <ion-toolbar>
+            <ion-title>{{ registroEditandoId ? 'Editar registro' : 'Nuevo registro' }}</ion-title>
             <ion-buttons slot="end">
-              <ion-button fill="clear" color="warning" (click)="abrirFormulario(r)">
-                <ion-icon name="create-outline"></ion-icon>
-              </ion-button>
-              <ion-button fill="clear" color="danger" (click)="eliminarRegistro(r.id)">
-                <ion-icon name="trash-outline"></ion-icon>
-              </ion-button>
+              <ion-button (click)="cerrarFormulario()">Cerrar</ion-button>
             </ion-buttons>
-          </ion-item>
-        </ion-list>
-      </ion-col>
+          </ion-toolbar>
+        </ion-header>
 
-      <!-- PENDIENTES -->
-      <ion-col size="6">
-        <ion-list>
-          <ion-list-header>
-            <ion-label>Pendientes</ion-label>
-          </ion-list-header>
+        <ion-content class="ion-padding">
 
-          <ion-item *ngFor="let r of filtrar(pendientes)">
-            <ion-label>
-              <h2>{{ r.nombre }}</h2>
-              <p>Fecha aplicada: {{ r.fecha | date:'dd/MM/yyyy' }}</p>
-              <p>Próxima dosis: {{ r.proximaDosis ? (r.proximaDosis | date:'dd/MM/yyyy') : 'N/A' }}</p>
-            </ion-label>
-            <ion-buttons slot="end">
-              <ion-button fill="clear" color="warning" (click)="abrirFormulario(r)">
-                <ion-icon name="create-outline"></ion-icon>
-              </ion-button>
-              <ion-button fill="clear" color="danger" (click)="eliminarRegistro(r.id)">
-                <ion-icon name="trash-outline"></ion-icon>
-              </ion-button>
-            </ion-buttons>
-          </ion-item>
-        </ion-list>
-      </ion-col>
+          <form [formGroup]="form" (ngSubmit)="guardarRegistro()">
 
-    </ion-row>
-  </ion-grid>
+            <ion-item>
+              <ion-label position="floating">Nombre vacuna</ion-label>
+              <ion-input formControlName="nombre"></ion-input>
+            </ion-item>
 
-  <!-- MODAL -->
-  <ion-modal [isOpen]="mostrarFormulario" (didDismiss)="cerrarFormulario()">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>{{ registroEditandoId ? 'Editar registro' : 'Nuevo registro' }}</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="cerrarFormulario()">Cerrar</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
+            <ion-item>
+              <ion-label position="floating">Fecha aplicada</ion-label>
+              <ion-datetime formControlName="fecha" presentation="date"></ion-datetime>
+            </ion-item>
 
-      <ion-content class="ion-padding">
-        <form [formGroup]="form" (ngSubmit)="guardarRegistro()">
+            <ion-item>
+              <ion-label position="floating">Próxima dosis (opcional)</ion-label>
+              <ion-datetime formControlName="proximaDosis" presentation="date"></ion-datetime>
+            </ion-item>
 
-          <ion-item>
-            <ion-label position="floating">Nombre vacuna</ion-label>
-            <ion-input formControlName="nombre"></ion-input>
-          </ion-item>
+            <ion-button
+              expand="full"
+              type="submit"
+              [disabled]="form.invalid"
+              class="ion-margin-top">
+              {{ registroEditandoId ? 'Actualizar' : 'Guardar' }}
+            </ion-button>
 
-          <ion-item>
-            <ion-label position="floating">Fecha aplicada</ion-label>
-            <ion-datetime formControlName="fecha" presentation="date"></ion-datetime>
-          </ion-item>
+          </form>
 
-          <ion-item>
-            <ion-label position="floating">Próxima dosis (opcional)</ion-label>
-            <ion-datetime formControlName="proximaDosis" presentation="date"></ion-datetime>
-          </ion-item>
+        </ion-content>
 
-          <ion-button expand="full" type="submit" [disabled]="form.invalid" class="ion-margin-top">
-            {{ registroEditandoId ? 'Actualizar' : 'Guardar' }}
-          </ion-button>
+      </ng-template>
+    </ion-modal>
 
-        </form>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-
-    <button class="fab-add" (click)="abrirFormulario()">
-    <ion-icon name="add-outline"></ion-icon>
-  </button>
+  </div> <!-- FIN CONTENEDOR -->
 
 </ion-content>
 
+<!-- FOOTER -->
 <ion-footer class="bottom-nav">
   <ion-toolbar>
     <ion-buttons slot="start">

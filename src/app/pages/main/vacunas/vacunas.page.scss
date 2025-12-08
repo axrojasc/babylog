@@ -1,30 +1,41 @@
-  h2{
-  text-decoration: underline;
+/* ---------- TITULOS Y PÁRRAFOS ---------- */
+
+h2 {
   text-align: center;
-  color:#ce5585;
-  margin-top: 20px;
+  color: #ce5585;
+  margin-top: 20px;        
+  font-size: 1.1rem;          
 }
 
-p{
+p {
   text-align: center;
   color: #666;
-  margin: 10px 20px;
-  font-size: 16px;
-}
-/* Fondo general */
-.vacunas-page {
-  --background: #f5f8fc;
-  padding-bottom: 120px; /* espacio para menú inferior */
+  margin: 10px 20px;   
+  font-size: 0.95rem;
 }
 
-/* Search */
+/* ---------- FONDO GENERAL ---------- */
+
+.vacunas-page {
+  --background: #f5f8fc;
+  padding: 0 0.75rem 6.5rem;  
+}
+
+.vacunas-container {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* ---------- SEARCH ---------- */
+
 .vacunas-search {
   --background: #ffffff;
   --border-radius: 999px;
-  margin-bottom: 12px;
+  margin-bottom: 12px;   
 }
 
-/* Tarjetas generales */
+/* ---------- TARJETAS GENERALES ---------- */
+
 .vacunas-card {
   border-radius: 22px;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
@@ -45,9 +56,10 @@ p{
   background: linear-gradient(135deg, #ffeef4, #ffffff);
 }
 
-/* Items de vacuna */
+/* ---------- ITEMS DE VACUNA ---------- */
+
 .vacuna-item {
-  margin-bottom: 6px;
+  margin-bottom: 6px;    
   border-radius: 14px;
   --background: rgba(255, 255, 255, 0.8);
 }
@@ -74,44 +86,96 @@ p{
   color: #788493;
 }
 
-/* Mensaje vacío */
+/* ---------- MENSAJE VACÍO ---------- */
+
 .empty-text {
   text-align: center;
   font-size: 0.9rem;
   color: #788493;
 }
 
-/* FAB flotante igual que en Sueño */
-.fab-add {
-  position: fixed;
-  bottom: 65px; /* justo arriba del footer */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: #d1789c;
-  color: #64b6ac;
-  border: none;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
 
-.fab-add ion-icon {
-  font-size: 2rem;
-}
 
-/* Menú inferior como en Sueño */
+/* ---------- MENÚ INFERIOR ---------- */
+
 .bottom-nav ion-toolbar {
   --background: #ffffff;
-  --border-color: rgba(0,0,0,0.05);
-  box-shadow: 0 -3px 12px rgba(0,0,0,0.12);
+  --border-color: rgba(0, 0, 0, 0.05);
+  box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.12);
   min-height: 56px;
 }
 
 .bottom-nav ion-button[fill="clear"] {
   --color: #1f3b57;
+}
+
+
+@media (min-width: 768px) {
+
+  h2 {
+    font-size: 1.3rem;
+    margin-top: 1.5rem;
+  }
+
+  p {
+    font-size: 1rem;
+    margin: 0.75rem 4rem;   
+  }
+
+  .vacunas-page {
+    padding: 0 2rem 6.5rem; 
+  }
+
+  .vacunas-card {
+    border-radius: 24px;
+  }
+
+  .vacunas-card ion-card-title {
+    font-size: 1.1rem;
+  }
+
+  .vacuna-item {
+    margin-bottom: 0.5rem;
+  }
+
+  .vacuna-item h2 {
+    font-size: 1rem;
+  }
+
+  .vacuna-item p {
+    font-size: 0.85rem;
+  }
+
+  .fab-add {
+    bottom: 5rem;            
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  .fab-add ion-icon {
+    font-size: 2rem;
+  }
+}
+
+
+@media (min-width: 1024px) {
+
+  .vacunas-page {
+    display: flex;
+    justify-content: center;
+  }
+
+  .vacunas-container {
+    width: 100%;
+    max-width: 1100px;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+
+  p {
+    font-size: 1.05rem;
+    margin: 1rem 6rem;
+  }
 }

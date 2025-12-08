@@ -1,4 +1,4 @@
-<app-header backButton="/auth" title="Registro"></app-header>
+<app-header [backButton]="true" title="Registro"></app-header>
 <ion-content>
 
 
@@ -23,7 +23,7 @@
 
       <!--========== Apellido ==========-->
 
-            <app-custom-input autocomplete="name" icon="person-outline" [control]="form.controls.name" type="name"
+            <app-custom-input autocomplete="lastName" icon="person-outline" [control]="form.controls.lastName" type="lastName"
         label="Apellido"></app-custom-input>
 
       <div class="validators" *ngIf="form.controls.name.errors && form.controls.name.touched">

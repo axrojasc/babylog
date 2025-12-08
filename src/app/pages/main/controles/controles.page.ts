@@ -20,9 +20,9 @@ export class ControlesPage {
     fecha: new FormControl('', [Validators.required])
   });
 
-  firebaseSvc: FirebaseService = inject(FirebaseService);
-  utilsSvc: UtilsService = inject(UtilsService);
-  alertCtrl: AlertController = inject(AlertController);
+  firebaseSvc = inject(FirebaseService);
+  utilsSvc = inject(UtilsService);
+  alertCtrl = inject(AlertController);
 
   mostrarFormulario = false;
 
@@ -33,6 +33,11 @@ export class ControlesPage {
 
   ngOnInit() {
     this.loadControles();
+  }
+
+  // 🔥 Obtener bebé activo desde localStorage
+  getCurrentBaby() {
+    return JSON.parse(localStorage.getItem("currentBaby") || "null");
   }
 
   abrirFormulario(control?: any) {
@@ -54,60 +59,61 @@ export class ControlesPage {
   }
 
   async guardarControl() {
-    if (this.form.valid) {
-      const loading = await this.utilsSvc.loading();
-      await loading.present();
+    if (!this.form.valid) return;
 
-      try {
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        const path = `users/${user.uid}/controles`;
+    const loading = await this.utilsSvc.loading();
+    await loading.present();
 
-        if (this.controlEditandoId) {
-          const controlPath = `${path}/${this.controlEditandoId}`;
-          await this.firebaseSvc.updateDocument(controlPath, { ...this.form.value });
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const baby = this.getCurrentBaby();
+      if (!baby) throw new Error('No hay bebé activo seleccionado.');
 
-          this.utilsSvc.presentToast({
-            message: 'Control actualizado correctamente',
-            duration: 1500,
-            color: 'primary',
-            position: 'middle',
-            icon: 'checkmark-circle-outline'
-          });
+      const path = `users/${user.uid}/babies/${baby.id}/controles`;
 
-        } else {
-          await this.firebaseSvc.addDocument(path, { ...this.form.value, realizado: false });
-
-          this.utilsSvc.presentToast({
-            message: 'Control guardado correctamente',
-            duration: 1500,
-            color: 'primary',
-            position: 'middle',
-            icon: 'checkmark-circle-outline'
-          });
-        }
-
-        this.loadControles();
-        this.cerrarFormulario();
-
-      } catch (error: any) {
-        console.log(error);
-        this.utilsSvc.presentToast({
-          message: error.message,
-          duration: 2500,
-          color: 'danger',
-          position: 'middle',
-          icon: 'alert-circle-outline'
+      if (this.controlEditandoId) {
+        await this.firebaseSvc.updateDocument(`${path}/${this.controlEditandoId}`, {
+          ...this.form.value
         });
 
-      } finally {
-        loading.dismiss();
+        this.utilsSvc.presentToast({
+          message: 'Control actualizado correctamente',
+          duration: 1500,
+          color: 'primary',
+          position: 'middle'
+        });
+
+      } else {
+        await this.firebaseSvc.addDocument(path, {
+          ...this.form.value,
+          realizado: false
+        });
+
+        this.utilsSvc.presentToast({
+          message: 'Control guardado correctamente',
+          duration: 1500,
+          color: 'primary',
+          position: 'middle'
+        });
       }
+
+      this.loadControles();
+      this.cerrarFormulario();
+
+    } catch (error: any) {
+      this.utilsSvc.presentToast({
+        message: error.message,
+        duration: 2500,
+        color: 'danger',
+        position: 'middle'
+      });
+
+    } finally {
+      loading.dismiss();
     }
   }
 
-  // ---------------------------------------
-  // Eliminación con confirmación
-  // ---------------------------------------
+  // 🔥 Eliminar control
   async eliminarControl(controlId: string) {
     const alert = await this.alertCtrl.create({
       header: 'Confirmar eliminación',
@@ -118,16 +124,19 @@ export class ControlesPage {
           text: 'Eliminar',
           role: 'destructive',
           handler: async () => {
+
             const user = JSON.parse(localStorage.getItem('user') || '{}');
-            const path = `users/${user.uid}/controles/${controlId}`;
+            const baby = this.getCurrentBaby();
+
+            const path = `users/${user.uid}/babies/${baby.id}/controles/${controlId}`;
 
             await this.firebaseSvc.deleteDocument(path);
+
             this.utilsSvc.presentToast({
               message: 'Control eliminado',
               duration: 1500,
               color: 'danger',
-              position: 'middle',
-              icon: 'trash-outline'
+              position: 'middle'
             });
 
             this.loadControles();
@@ -139,21 +148,34 @@ export class ControlesPage {
     await alert.present();
   }
 
+  // 🔥 Marcar control como realizado
   async marcarComoRealizado(docId: string, data: any) {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const path = `users/${user.uid}/controles/${docId}`;
+    const baby = this.getCurrentBaby();
+
+    const path = `users/${user.uid}/babies/${baby.id}/controles/${docId}`;
+
     return this.firebaseSvc.updateDocument(path, { ...data, realizado: true });
   }
 
+  // 🔥 Cargar controles del bebé activo
   async loadControles() {
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const path = `users/${user.uid}/controles`;
+      const baby = this.getCurrentBaby();
+
+      if (!baby) {
+        this.controlesPendientes = [];
+        this.controlesRealizados = [];
+        return;
+      }
+
+      const path = `users/${user.uid}/babies/${baby.id}/controles`;
 
       const controles: any[] = await firstValueFrom(this.firebaseSvc.getCollectionData(path));
-
       const ahora = new Date().getTime();
 
+      // Marcar como realizados los que ya pasaron
       for (const c of controles) {
         const fechaControl = new Date(c.fecha).getTime();
         if (!c.realizado && fechaControl < ahora) {
@@ -161,12 +183,21 @@ export class ControlesPage {
         }
       }
 
-      const controlesActualizados: any[] = await firstValueFrom(this.firebaseSvc.getCollectionData(path));
-      this.controlesPendientes = controlesActualizados.filter(c => !c.realizado);
-      this.controlesRealizados = controlesActualizados.filter(c => c.realizado);
+      const actualizados: any[] = await firstValueFrom(this.firebaseSvc.getCollectionData(path));
+
+      this.controlesPendientes = actualizados.filter(c => !c.realizado);
+      this.controlesRealizados = actualizados.filter(c => c.realizado);
 
     } catch (error) {
       console.log(error);
     }
+  }
+
+  // 🔥 Filtro por búsqueda
+  filtrar(lista: any[]) {
+    if (!this.busqueda.trim()) return lista;
+    return lista.filter(item =>
+      item.nombre.toLowerCase().includes(this.busqueda.toLowerCase())
+    );
   }
 }

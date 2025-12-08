@@ -2,16 +2,18 @@
 
 <ion-content class="ion-padding">
 
-  <!-- Gráfico -->
-  <div style="width: 100%; margin-bottom: 25px;">
-    <canvas id="chartCrecimiento"></canvas>
-  </div>
-
   <h2>Registros de Crecimiento 📈</h2>
   <p>Aqui podras encontrar los registros de crecimiento de tu bebé, ctualizalo regularmente para lograr generar un reporte mas
     completo</p>
 
   <ion-searchbar placeholder="Buscar registro..." [(ngModel)]="busqueda"></ion-searchbar>
+
+      <ion-button expand="block" class="ion-margin-top" (click)="abrirFormulario()">Registrar crecimiento</ion-button>
+
+        <!-- Gráfico -->
+  <div style="width: 100%; margin-bottom: 25px;">
+    <canvas id="chartCrecimiento"></canvas>
+  </div>
 
   <ion-list>
     <ion-item *ngFor="let r of registros">
@@ -65,10 +67,6 @@
     </ng-template>
   </ion-modal>
 
-  <!-- FAB flotante para alternar formulario -->
-  <button class="fab-add" (click)="abrirFormulario()">
-    <ion-icon name="add-outline"></ion-icon>
-  </button>
 
 </ion-content>
 
