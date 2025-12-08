@@ -1,0 +1,79 @@
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  text-align: center;
+
+  ion-spinner {
+    transform: scale(1.5);
+    margin-bottom: 20px;
+  }
+
+  .loading-text {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--ion-color-dark);
+  }
+
+  .sub-text {
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.chat-container {
+  padding-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.message {
+  display: flex;
+  width: 100%;
+  
+  &.user {
+    justify-content: flex-end;
+    .bubble {
+      background-color: var(--ion-color-primary);
+      color: white;
+      border-bottom-right-radius: 2px;
+    }
+  }
+
+  &.bot {
+    justify-content: flex-start;
+    .bubble {
+      background-color: #f0f0f0; // Gris suave
+      color: black;
+      border-bottom-left-radius: 2px;
+    }
+  }
+}
+
+.bubble {
+  padding: 10px 15px;
+  border-radius: 18px;
+  max-width: 80%;
+  font-size: 1rem;
+  line-height: 1.4;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+// Animación de escribiendo (...)
+.typing {
+  font-style: italic;
+  span {
+    animation: blink 1.4s infinite both;
+  }
+  span:nth-child(2) { animation-delay: 0.2s; }
+  span:nth-child(3) { animation-delay: 0.4s; }
+}
+
+@keyframes blink {
+  0% { opacity: 0.2; }
+  20% { opacity: 1; }
+  100% { opacity: 0.2; }
+}

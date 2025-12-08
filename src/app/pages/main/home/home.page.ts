@@ -330,5 +330,6 @@ export class HomePage {
   goToControles() { this.router.navigate(['/main/controles']); }
   goToPeso() { this.router.navigate(['/main/alimentacion']); }
   goToCrecimiento() { this.router.navigate(['/main/crecimiento']); }
+  goToChatbot() { this.router.navigate(['/main/chatbot']); }
 
 }
