@@ -29,6 +29,23 @@ const routes: Routes = [
     loadChildren: () => import('./pages/auth/forgot-password/forgot-password.module').then(m => m.ForgotPasswordPageModule),
     canActivate: [NoAuthGuard]
   },
+  {
+    path: 'edit-profile',
+    loadChildren: () => import('src/app/pages/main/profile/edit-profile/edit-profile.module').then( m => m.EditProfilePageModule)
+  },
+  {
+    path: 'edit-profile',
+    loadChildren: () => import('./pages/main/profile/edit-profile/edit-profile.module').then( m => m.EditProfilePageModule)
+  },
+  {
+    path: 'add-baby',
+    loadChildren: () => import('./pages/main/profile/add-baby/add-baby.module').then( m => m.AddBabyPageModule)
+  },
+  {
+    path: 'edit-baby',
+    loadChildren: () => import('./pages/main/profile/edit-baby/edit-baby.module').then( m => m.EditBabyPageModule)
+  },
+
 ];
 
 @NgModule({

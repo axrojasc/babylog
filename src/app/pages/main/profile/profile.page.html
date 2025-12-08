@@ -48,6 +48,7 @@
 
   <div class="babies-grid" *ngIf="babies?.length; else noBabies">
     <div class="baby-card" *ngFor="let baby of babies">
+
       <!-- Foto bebé -->
       <div class="baby-avatar" (click)="changeBabyPhoto(baby)">
         <div class="avatar-circle">
@@ -59,6 +60,9 @@
 
       <!-- Datos bebé -->
       <div class="baby-info">
+        <p *ngIf="baby.isFavorite" class="favorite-label">
+          ⭐ Bebé principal
+        </p>
         <p><span>Nombre del bebé:</span> {{ baby.firstName || '-' }}</p>
         <p><span>Apellido del bebé:</span> {{ baby.lastName || '-' }}</p>
         <p><span>Fecha de nacimiento:</span> {{ baby.birthDate || '-' }}</p>
@@ -68,8 +72,13 @@
         <p><span>Alergias:</span> {{ baby.allergies || '-' }}</p>
       </div>
 
-      <!-- Botón actualizar bebé -->
+      <!-- Botones bebé -->
       <div class="baby-actions">
+        <ion-button mode="ios" size="small" fill="clear" (click)="setFavorite(baby)">
+          <ion-icon [name]="baby.isFavorite ? 'star' : 'star-outline'" slot="start"></ion-icon>
+          {{ baby.isFavorite ? 'Bebé principal' : 'Marcar como principal' }}
+        </ion-button>
+
         <ion-button mode="ios" size="small" (click)="editBaby(baby)">
           Actualizar datos
         </ion-button>

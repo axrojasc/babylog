@@ -9,9 +9,9 @@ import { UtilsService } from 'src/app/services/utils.service';
 })
 export class HeaderComponent {
   @Input() title!: string;
-  @Input() backButton!: string;
   @Input() isModal: boolean;
   @Input() showMenu: boolean;
+  @Input() backButton: boolean;
 
   utilsSvc = inject(UtilsService);
 

@@ -100,3 +100,246 @@ ion-button {
     }
 }
 
+/* ====================================
+   🎨 BabyLog — Tema global
+   ==================================== */
+
+/* Fondo y tipografía base */
+body,
+ion-content {
+  --background: #f5f8fc;
+  font-family: 'Poppins', sans-serif;
+  color: #1f3b57;
+}
+
+/* Títulos y párrafos genéricos */
+h1 {
+  margin: 16px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #243447;
+}
+
+p {
+  margin: 0 16px 16px;
+  font-size: 1rem;
+  color: #1f3b57;
+}
+
+/* Contenedor base para dashboards/vistas */
+.home-dashboard,
+.perfil-page {
+  --background: #f5f8fc;
+  padding: 0 0 16px 0;
+}
+
+/* CARD TIPO HERO (reutilizable) */
+.hero-card {
+  margin: 16px;
+  border-radius: 24px;
+  padding: 18px 16px 14px;
+  background: linear-gradient(135deg, #e3f2ff, #fdfbff);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Parte superior del hero */
+.hero-top {
+  display: flex;
+  flex-direction: row;
+}
+
+.hero-avatar-wrapper {
+  margin-right: 14px;
+}
+
+.hero-avatar {
+  width: 88px;
+  height: 88px;
+  border: 3px solid #ffffff;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+.hero-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-info {
+  flex: 1;
+}
+
+.hero-name {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1f3b57;
+}
+
+.hero-subtitle {
+  margin: 2px 0 8px;
+  font-size: 0.85rem;
+  color: #6c7b8a;
+}
+
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.badge-primary {
+  background: rgba(33, 150, 243, 0.12);
+  color: #1565c0;
+}
+
+.badge-soft {
+  background: rgba(255, 193, 203, 0.25);
+  color: #b23b72;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* Parte inferior del hero (mini KPIs) */
+.hero-bottom {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.7);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  row-gap: 8px;
+  column-gap: 8px;
+}
+
+.hero-stat {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 14px;
+  padding: 6px 8px;
+}
+
+.hero-stat-label {
+  display: block;
+  font-size: 0.7rem;
+  color: #7c8590;
+}
+
+.hero-stat-value {
+  display: block;
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: #1f3b57;
+}
+
+/* Estado vacío (sin perfil) */
+.hero-empty {
+  margin: 24px 16px 8px;
+  text-align: center;
+}
+
+.hero-empty h2 {
+  margin-bottom: 8px;
+}
+
+.hero-empty p {
+  font-size: 0.9rem;
+  color: #6d6d6d;
+  margin-bottom: 12px;
+}
+
+/* Títulos de secciones */
+.section-header {
+  padding: 4px 18px 0;
+}
+
+.section-header h3 {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #243447;
+}
+
+/* KPI CARDS GLOBAL */
+.kpi-card {
+  border-radius: 20px;
+  margin: 8px;
+  --background: #ffffff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.kpi-card ion-card-content {
+  text-align: left;
+  padding: 12px 12px 14px;
+}
+
+.kpi-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+  background: rgba(33, 150, 243, 0.09);
+}
+
+.kpi-icon ion-icon {
+  font-size: 1.3rem;
+  color: #1565c0;
+}
+
+.kpi-title {
+  font-size: 0.85rem;
+  color: #6c7b8a;
+}
+
+.kpi-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 2px 0 0;
+  color: #1f3b57;
+}
+
+.kpi-subtitle {
+  font-size: 0.78rem;
+  color: #9aa5b4;
+}
+
+/* Variantes de KPI (colores de fondo) */
+.kpi-sleep {
+  --background: #e5f2ff;
+}
+
+.kpi-vacunas {
+  --background: #ffeef4;
+}
+
+.kpi-controles {
+  --background: #fff8e7;
+}
+
+.kpi-peso {
+  --background: #e8fff3;
+}
+
+.module-page {
+  --background: #f5f8fc;
+  padding: 0 0 16px 0;
+}
+

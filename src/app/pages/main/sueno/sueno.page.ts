@@ -17,17 +17,19 @@ export class SuenoPage implements AfterViewInit {
   busqueda: string = '';
   mostrarFormulario = false;
   registros: any[] = [];
-  form = new FormGroup({
-    inicio: new FormControl('', [Validators.required]),
-    fin: new FormControl('', [Validators.required]),
-    duracion: new FormControl('', [Validators.required])
-  });
+  chart: any;
+
   firebaseSvc: FirebaseService = inject(FirebaseService);
   utilsSvc: UtilsService = inject(UtilsService);
   alertController: AlertController = inject(AlertController);
-  chart: any;
 
   registroEditandoId: string | null = null;
+
+  form = new FormGroup({
+    inicio: new FormControl('', [Validators.required]),
+    fin: new FormControl('', [Validators.required]),
+    duracion: new FormControl('', [Validators.required]),
+  });
 
   ngOnInit() {
     this.loadRegistros();
@@ -37,13 +39,19 @@ export class SuenoPage implements AfterViewInit {
     setTimeout(() => this.generarGrafico(), 500);
   }
 
+  // 🔥 Obtener bebé activo desde localStorage
+  getCurrentBaby() {
+    return JSON.parse(localStorage.getItem('currentBaby') || 'null');
+  }
+
   abrirFormulario(registro?: any) {
     this.mostrarFormulario = true;
+
     if (registro) {
       this.form.patchValue({
         inicio: registro.inicio,
         fin: registro.fin,
-        duracion: registro.duracion
+        duracion: registro.duracion,
       });
       this.registroEditandoId = registro.id;
     }
@@ -74,26 +82,31 @@ export class SuenoPage implements AfterViewInit {
 
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const path = `users/${user.uid}/sueno`;
+      const baby = this.getCurrentBaby();
+
+      if (!baby) throw new Error('No hay bebé activo seleccionado.');
+
+      const path = `users/${user.uid}/babies/${baby.id}/sueno`;
 
       if (this.registroEditandoId) {
         const registroPath = `${path}/${this.registroEditandoId}`;
         await this.firebaseSvc.updateDocument(registroPath, this.form.value);
+
         this.utilsSvc.presentToast({
           message: 'Registro actualizado',
           duration: 1500,
           color: 'primary',
           position: 'middle',
-          icon: 'checkmark-circle-outline'
         });
+
       } else {
         await this.firebaseSvc.addDocument(path, this.form.value);
+
         this.utilsSvc.presentToast({
           message: 'Registro guardado',
           duration: 1500,
           color: 'primary',
           position: 'middle',
-          icon: 'checkmark-circle-outline'
         });
       }
 
@@ -107,53 +120,65 @@ export class SuenoPage implements AfterViewInit {
         duration: 2500,
         color: 'danger',
         position: 'middle',
-        icon: 'alert-circle-outline'
       });
     } finally {
       loading.dismiss();
     }
   }
 
-  // ✅ Método eliminar con confirmación
+  // 🔥 Eliminar registro del bebé activo
   async eliminarRegistro(id: string) {
     const alert = await this.alertController.create({
       header: 'Confirmar',
       message: '¿Deseas eliminar este registro?',
       buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
+        { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Eliminar',
           role: 'destructive',
           handler: async () => {
             const user = JSON.parse(localStorage.getItem('user') || '{}');
-            const path = `users/${user.uid}/sueno/${id}`;
+            const baby = this.getCurrentBaby();
+
+            const path = `users/${user.uid}/babies/${baby.id}/sueno/${id}`;
+
             await this.firebaseSvc.deleteDocument(path);
+
             this.utilsSvc.presentToast({
               message: 'Registro eliminado',
               duration: 1500,
               color: 'danger',
               position: 'middle',
-              icon: 'trash-outline'
             });
+
             this.loadRegistros();
             this.generarGrafico();
           }
         }
       ]
     });
+
     await alert.present();
   }
 
+  // 🔥 Cargar registros del bebé activo
   async loadRegistros() {
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const path = `users/${user.uid}/sueno`;
+      const baby = this.getCurrentBaby();
+
+      if (!baby) {
+        this.registros = [];
+        return;
+      }
+
+      const path = `users/${user.uid}/babies/${baby.id}/sueno`;
+
       const data: any = await firstValueFrom(this.firebaseSvc.getCollectionData(path));
       this.registros = data || [];
+
       this.generarGrafico();
+
     } catch (error) {
       console.log(error);
     }
@@ -162,6 +187,7 @@ export class SuenoPage implements AfterViewInit {
   generarGrafico() {
     const ctx = document.getElementById('suenoChart') as any;
     if (!ctx) return;
+
     if (this.chart) this.chart.destroy();
 
     const dias = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
@@ -177,13 +203,20 @@ export class SuenoPage implements AfterViewInit {
 
     this.chart = new Chart(ctx, {
       type: 'bar',
-      data: { labels: dias, datasets: [{ label: 'Horas de sueño', data: valores }] },
+      data: {
+        labels: dias,
+        datasets: [
+          { label: 'Horas de sueño', data: valores, backgroundColor: '#a0c4ff' }
+        ]
+      },
       options: { responsive: true, scales: { y: { beginAtZero: true } } }
     });
   }
 
   filtrar(lista: any[]) {
     if (!this.busqueda.trim()) return lista;
-    return lista.filter(item => item.inicio.toLowerCase().includes(this.busqueda.toLowerCase()));
+    return lista.filter(item =>
+      item.inicio.toLowerCase().includes(this.busqueda.toLowerCase())
+    );
   }
 }

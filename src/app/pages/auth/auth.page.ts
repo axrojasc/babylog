@@ -13,10 +13,12 @@ import { UtilsService } from '../../services/utils.service';
 })
 export class AuthPage {
 
+  // 🔹 Aquí agregamos el control "remember"
   form = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required])
-  })
+    password: new FormControl('', [Validators.required]),
+    remember: new FormControl(false)  // ⬅️ NUEVO
+  });
 
   private readonly router = inject(Router);
 
@@ -26,6 +28,12 @@ export class AuthPage {
 
   goToForgotPassword() {
     this.router.navigate(['/forgot-password']);
+  }
+
+  // 🔹 Este método es para cuando haces click en el texto "Recuérdame"
+  toggleRemember() {
+    const current = this.form.get('remember')?.value;
+    this.form.get('remember')?.setValue(!current);
   }
 
   firebaseSvc = inject(FirebaseService);
@@ -57,7 +65,7 @@ export class AuthPage {
 
       }).finally(() => {
         loading.dismiss();
-      })
+      });
 
     }
 
@@ -69,7 +77,7 @@ export class AuthPage {
       const loading = await this.utilsSvc.loading();
       await loading.present();
 
-      let path = `users/${uid}`
+      let path = `users/${uid}`;
       delete this.form.value.password;
 
       this.firebaseSvc.getDocument(path).then((user: User) => {
@@ -99,7 +107,7 @@ export class AuthPage {
 
       }).finally(() => {
         loading.dismiss();
-      })
+      });
 
     }
 
@@ -132,11 +140,11 @@ export class AuthPage {
         color: 'danger',
         position: 'middle',
         icon: 'alert-circle-outline'
-      })
+      });
 
     }).finally(() => {
       loading.dismiss();
-    })
+    });
 
   }
 
