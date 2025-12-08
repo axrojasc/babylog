@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { User } from 'src/app/models/user.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-profile',
@@ -15,6 +16,7 @@ export class ProfilePage implements OnInit {
   firebaseSvc = inject(FirebaseService);
   utilsSvc = inject(UtilsService);
   router = inject(Router);
+  alertCtrl = inject(AlertController);
 
   // Arreglo de bebés para el grid
   babies: any[] = [];
@@ -28,17 +30,65 @@ export class ProfilePage implements OnInit {
     return this.utilsSvc.getFromLocalStorage('user');
   }
 
-  // Cargar bebés (ajusta según tu modelo / Firebase)
-  loadBabies() {
+  // Cargar bebés desde Firebase en tiempo real
+  async loadBabies() {
     const user = this.user();
-    if (user && (user as any).babies) {
-      this.babies = (user as any).babies;
-    } else {
-      this.babies = [];
-    }
+    if (!user) return;
 
-    // Si luego los lees desde Firebase, puedes reemplazar por:
-    // this.firebaseSvc.getCollectionData(`users/${user.uid}/babies`).then(...);
+    const path = `users/${user.uid}/babies`;
+
+    this.firebaseSvc.getCollectionData(path).subscribe({
+      next: (babies: any[]) => {
+        this.babies = babies.map(b => ({
+          id: b.id,
+          ...b
+        }));
+      },
+      error: (err) => {
+        console.error(err);
+        this.babies = [];
+      }
+    });
+  }
+
+  // --- MARCAR BEBÉ COMO PRINCIPAL ---
+  async setFavorite(baby: any) {
+    const user = this.user();
+    if (!user) return;
+
+    const loading = await this.utilsSvc.loading();
+    await loading.present();
+
+    try {
+      const path = `users/${user.uid}/babies`;
+
+      // Quitar favorito a todos y dejar solo uno
+      for (const b of this.babies) {
+        await this.firebaseSvc.updateDocument(`${path}/${b.id}`, {
+          isFavorite: b.id === baby.id
+        });
+      }
+
+      this.loadBabies();
+
+      this.utilsSvc.presentToast({
+        message: `${baby.name} ahora es el bebé principal 💖`,
+        duration: 1500,
+        color: 'primary',
+        position: 'middle',
+        icon: 'star'
+      });
+
+    } catch (error) {
+      console.error(error);
+      this.utilsSvc.presentToast({
+        message: 'Error al marcar como principal',
+        duration: 1500,
+        color: 'danger'
+      });
+    } finally {
+      loading.dismiss();
+    }
   }
 
   // --- FOTO PERFIL TUTOR ---
@@ -55,7 +105,6 @@ export class ProfilePage implements OnInit {
     try {
       const picture = await this.utilsSvc.takePicture('Imagen de perfil');
 
-      // Si cancela cámara / galería
       if (!picture || !picture.dataUrl) {
         await loading.dismiss();
         return;
@@ -65,7 +114,6 @@ export class ProfilePage implements OnInit {
 
       await this.firebaseSvc.updateDocument(path, { image: imageUrl });
 
-      // Actualizar user en localStorage
       (user as any).image = imageUrl;
       this.utilsSvc.setInLocalStorage('user', user);
 
@@ -109,12 +157,10 @@ export class ProfilePage implements OnInit {
 
       const imageUrl = await this.firebaseSvc.uploadImage(path, imagePath, picture.dataUrl);
 
-      // Actualizar en Firebase (ajusta la ruta del documento según tu modelo)
       if (baby.id) {
         await this.firebaseSvc.updateDocument(`${path}/${baby.id}`, { photo: imageUrl });
       }
 
-      // Reflejar en la UI
       baby.photo = imageUrl;
 
       this.utilsSvc.presentToast({
@@ -139,27 +185,73 @@ export class ProfilePage implements OnInit {
   // --- NAVEGACIÓN / ACCIONES ---
 
   editTutorProfile() {
-    // TODO: Ajusta la ruta a tu página de edición de perfil
     this.router.navigate(['/edit-profile']);
   }
 
   addBaby() {
-    // TODO: Ajusta la ruta a tu formulario para crear bebé
     this.router.navigate(['/add-baby']);
   }
 
   editBaby(baby: any) {
-    // TODO: Ajusta la ruta y parámetro según tu app
     this.router.navigate(['/edit-baby', baby.id]);
   }
 
-  goToTerms() {
-    // TODO: Ruta a términos y condiciones
-    this.router.navigate(['/terms']);
+  // ✅ POPUP MESA DE AYUDA
+  async goToHelpDesk() {
+    const alert = await this.alertCtrl.create({
+      header: 'Mesa de ayuda',
+      message: `
+        Correo de soporte:
+          soporte@babylog.cl
+          WhatsApp:
+          +56 9 1234 5678
+          Horario de atención:
+          Lunes a Viernes, 09:00 - 18:00 hrs.
+      `,
+      buttons: [
+        {
+          text: 'Cerrar',
+          role: 'cancel'
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
-  goToHelpDesk() {
-    // TODO: Ruta a mesa de ayuda / soporte
-    this.router.navigate(['/help-desk']);
+  // ✅ POPUP TÉRMINOS Y CONDICIONES
+  async goToTerms() {
+    const alert = await this.alertCtrl.create({
+      header: 'Términos y condiciones',
+      message: `
+          1. Uso de la aplicación
+          BabyLog está pensada como apoyo para el registro de datos pediátricos
+          y no reemplaza en ningún caso la evaluación de un profesional de la salud.
+
+          2. Responsabilidad del usuario
+          Eres responsable de la veracidad de la información que ingresas sobre tu bebé
+          y del uso que haces de los datos mostrados por la aplicación.
+
+          3. Datos personales
+          La información registrada se utiliza solo para el funcionamiento de BabyLog
+          y no se comparte con terceros sin tu consentimiento, salvo obligación legal.
+
+          4. Seguridad
+          BabyLog implementa medidas razonables de seguridad, pero ningún sistema es
+          100% infalible. Te recomendamos usar contraseñas seguras y no compartir tu cuenta.
+
+          5. Soporte
+          Ante dudas o problemas, puedes contactar a nuestro equipo a través de la Mesa de ayuda.
+        
+      `,
+      buttons: [
+        {
+          text: 'Cerrar',
+          role: 'cancel'
+        }
+      ]
+    });
+
+    await alert.present();
   }
 }

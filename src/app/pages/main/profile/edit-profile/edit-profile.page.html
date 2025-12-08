@@ -1,0 +1,31 @@
+<app-header [backButton]="true" title="Editar perfil"></app-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="form">
+
+    <ion-item>
+      <ion-label position="stacked">Nombre</ion-label>
+      <ion-input formControlName="name"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Apellido</ion-label>
+      <ion-input formControlName="lastName"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Teléfono</ion-label>
+      <ion-input formControlName="phone" type="tel"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Correo</ion-label>
+      <ion-input formControlName="email" [disabled]="true"></ion-input>
+    </ion-item>
+
+    <ion-button expand="block" class="ion-margin-top" (click)="saveProfile()">
+      Guardar cambios
+    </ion-button>
+
+  </form>
+</ion-content>

@@ -1,7 +1,11 @@
 <app-header [showMenu]="true" title="Controles"></app-header>
 
-<ion-content class="ion-padding">
+<ion-content class="module-page">
 
+        <h2>Registro de controles 📅</h2>
+  <p>Gestiona y realiza un seguimiento de los controles médicos de tu bebé para asegurar su bienestar y salud 🩺</p>
+  
+      
   <ion-searchbar placeholder="Buscar control..." [(ngModel)]="busqueda"></ion-searchbar>
 
   <ion-button class="ion-margin-top" expand="block" (click)="abrirFormulario()">
@@ -104,10 +108,6 @@
     </ng-template>
 
   </ion-modal>
-
-    <button class="fab-add" (click)="abrirFormulario()">
-    <ion-icon name="add-outline"></ion-icon>
-  </button>
 
 </ion-content>
 

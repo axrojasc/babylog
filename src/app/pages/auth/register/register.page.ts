@@ -18,6 +18,7 @@ export class RegisterPage {
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required]),
     name: new FormControl('', [Validators.required, Validators.minLength(4)]),
+    lastName: new FormControl('', [Validators.required, Validators.minLength(4)]),
   })
 
   firebaseSvc = inject(FirebaseService);

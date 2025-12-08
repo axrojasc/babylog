@@ -1,329 +1,262 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { Imagen } from 'src/app/models/image.model';
-import { User } from 'src/app/models/user.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
-import { AddUpdateImageComponent } from 'src/app/shared/components/add-update-image/add-update-image.component';
-import { AlertController } from '@ionic/angular';
-import { firstValueFrom } from 'rxjs';
+import { User } from 'src/app/models/user.model';
 
 @Component({
   selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  templateUrl: './home.page.html',
+  styleUrls: ['./home.page.scss'],
   standalone: false,
 })
-export class HomePage {
+export class HomePage implements OnInit {
 
   firebaseSvc = inject(FirebaseService);
   utilsSvc = inject(UtilsService);
-  alertController = inject(AlertController);
+  router = inject(Router);
 
-  image: Imagen[] = [];
-  loading: boolean = false;
+  userData!: User;
+  babies: any[] = [];
+  favoriteBaby: any = null;
 
-  // Próximo control
-  proximoControl: string | null = null;
-  proximoControlNombre: string | null = null;
+  loading = true;
 
-  // Próxima vacuna
-  proximaVacuna: string | null = null;
-  proximaVacunaNombre: string | null = null;
-
-  // Último registro de sueño
+  // Lo que ya usabas
+  image: any[] = [];
   ultimoSueno: string | null = null;
-
-  // Último registro de alimentación
+  proximaVacunaNombre: string | null = null;
+  proximaVacuna: string | null = null;
+  proximoControlNombre: string | null = null;
+  proximoControl: string | null = null;
   ultimaComida: string | null = null;
   ultimaComidaCantidad: string | null = null;
-
-  // Último registro de crecimiento
   ultimoPeso: string | null = null;
   ultimaAltura: string | null = null;
 
   ngOnInit() {}
 
   ionViewWillEnter() {
-    this.getImage();
-    this.loadProximoControl();
-    this.loadProximaVacuna();
-    this.loadUltimoSueno();
-    this.loadUltimaComida();
-    this.loadUltimoCrecimiento(); // <-- AGREGADO
+    this.userData = this.utilsSvc.getFromLocalStorage('user');
+    this.loadFavoriteBaby();
   }
 
-  user(): User {
-    return this.utilsSvc.getFromLocalStorage('user');
-  }
+  // 🔥 Cargar bebé favorito y luego los resúmenes de ese bebé
+  loadFavoriteBaby() {
+    const user = this.userData;
+    if (!user) return;
 
-  doRefresh(event) {
-    setTimeout(() => {
-      this.getImage();
-      this.loadProximoControl();
-      this.loadProximaVacuna();
-      this.loadUltimoSueno();
-      this.loadUltimaComida();
-      this.loadUltimoCrecimiento(); // <-- AGREGADO
-      event.target.complete();
-    }, 1000);
-  }
+    const path = `users/${user.uid}/babies`;
 
-  getImage() {
-    let path = `users/${this.user().uid}/image`;
+    this.firebaseSvc.getCollectionData(path).subscribe({
+      next: (babies: any[]) => {
+        this.babies = babies;
 
-    this.loading = true;
+        // 1) Intentamos usar el que tenga isFavorite en Firebase
+        let favorite = babies.find(b => b.isFavorite);
 
-    let sub = this.firebaseSvc.getCollectionData(path).subscribe({
-      next: (res: any) => {
-        this.image = res;
-        this.loading = false;
-        sub.unsubscribe();
-      }
-    });
-  }
-
-  async addUpdateImage(image?: Imagen) {
-    const result = await this.utilsSvc.presentModal({
-      component: AddUpdateImageComponent,
-      cssClass: 'add-update-modal',
-      componentProps: { image: this.image[0] ?? null }
-    });
-
-    if (result?.success) {
-      this.getImage();
-    }
-  }
-
-  async deleteImage(image: Imagen) {
-    let path = `users/${this.user().uid}/image/${image.id}`;
-
-    const loading = await this.utilsSvc.loading();
-    await loading.present();
-
-    try {
-      let imagePath = await this.firebaseSvc.getFilePath(image.image);
-      await this.firebaseSvc.deleteFile(imagePath);
-      await this.firebaseSvc.deleteDocument(path);
-
-      this.image = this.image.filter(p => p.id !== image.id);
-
-      this.utilsSvc.presentToast({
-        message: 'Perfil eliminado exitosamente',
-        duration: 1500,
-        color: 'primary',
-        position: 'middle',
-        icon: 'checkmark-circle-outline'
-      });
-
-    } catch (error: any) {
-      this.utilsSvc.presentToast({
-        message: error.message,
-        duration: 2500,
-        color: 'danger',
-        position: 'middle',
-        icon: 'alert-circle-outline'
-      });
-    }
-
-    loading.dismiss();
-  }
-
-  async confirmDelete(image: Imagen) {
-    const alert = await this.alertController.create({
-      header: 'Eliminar imagen',
-      message: '¿Estás seguro de que deseas eliminar esta imagen de perfil?',
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Eliminar',
-          role: 'destructive',
-          handler: () => this.deleteImage(image)
+        // 2) Si no hay, intentamos usar el guardado en localStorage
+        const currentBabyLS = this.utilsSvc.getFromLocalStorage('currentBaby');
+        if (!favorite && currentBabyLS) {
+          favorite = babies.find(b => b.id === currentBabyLS.id);
         }
-      ]
+
+        this.favoriteBaby = favorite || null;
+
+        if (this.favoriteBaby) {
+          this.image = [{
+            image: this.favoriteBaby.photo,
+            name: `${this.favoriteBaby.firstName} ${this.favoriteBaby.lastName}`
+          }];
+
+          // Guardamos también en localStorage para otras vistas
+          this.utilsSvc.setInLocalStorage('currentBaby', {
+            id: this.favoriteBaby.id,
+            firstName: this.favoriteBaby.firstName,
+            lastName: this.favoriteBaby.lastName,
+            photo: this.favoriteBaby.photo || null,
+          });
+
+          // 🟢 Aquí vuelves a cargar TODAS tus métricas pero filtrando por bebé
+          this.loadResumenSueno(this.favoriteBaby.id);
+          this.loadResumenVacunas(this.favoriteBaby.id);
+          this.loadResumenControles(this.favoriteBaby.id);
+          this.loadResumenAlimentacion(this.favoriteBaby.id);
+          this.loadResumenCrecimiento(this.favoriteBaby.id);
+
+        } else {
+          // Sin bebé seleccionado
+          this.image = [];
+          this.resetResumenes();
+        }
+
+        this.loading = false;
+      },
+      error: err => {
+        console.error('Error cargando bebés:', err);
+        this.loading = false;
+      }
     });
-
-    await alert.present();
   }
 
-  // ========================
-  // Próximo control
-  // ========================
-  async loadProximoControl() {
-    try {
-      const uid = this.user().uid;
-      const path = `users/${uid}/controles`;
-
-      const registros: any[] = await firstValueFrom(
-        this.firebaseSvc.getCollectionData(path)
-      );
-
-      if (!registros.length) {
-        this.proximoControl = null;
-        this.proximoControlNombre = null;
-        return;
-      }
-
-      const hoy = new Date();
-
-      const futuras = registros
-        .filter(r => new Date(r.fecha) >= hoy)
-        .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime());
-
-      if (!futuras.length) {
-        this.proximoControl = null;
-        this.proximoControlNombre = null;
-        return;
-      }
-
-      const proximo = futuras[0];
-      this.proximoControl = new Date(proximo.fecha).toLocaleDateString('es-CL');
-      this.proximoControlNombre = proximo.nombre || null;
-
-    } catch (error) {
-      console.log(error);
-      this.proximoControl = null;
-      this.proximoControlNombre = null;
-    }
+  resetResumenes() {
+    this.ultimoSueno = null;
+    this.proximaVacunaNombre = null;
+    this.proximaVacuna = null;
+    this.proximoControlNombre = null;
+    this.proximoControl = null;
+    this.ultimaComida = null;
+    this.ultimaComidaCantidad = null;
+    this.ultimoPeso = null;
+    this.ultimaAltura = null;
   }
 
-  // ========================
-  // Próxima vacuna
-  // ========================
-  async loadProximaVacuna() {
-    try {
-      const uid = this.user().uid;
-      const path = `users/${uid}/vacunas`;
+  // 🟣 EJEMPLOS DE FUNCIONES PARA CARGAR INFO POR BEBÉ
+  // 👉 Aquí metes tu lógica vieja, pero filtrando por babyId
 
-      const registros: any[] = await firstValueFrom(
-        this.firebaseSvc.getCollectionData(path)
-      );
+  loadResumenSueno(babyId: string) {
+    const user = this.userData;
+    const path = `users/${user.uid}/babies/${babyId}/sueno`;
 
-      if (!registros.length) {
-        this.proximaVacuna = null;
-        this.proximaVacunaNombre = null;
-        return;
-      }
-
-      const hoy = new Date();
-
-      const futuras = registros
-        .filter(r => new Date(r.fecha) >= hoy)
-        .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime());
-
-      if (!futuras.length) {
-        this.proximaVacuna = null;
-        this.proximaVacunaNombre = null;
-        return;
-      }
-
-      const proxima = futuras[0];
-      this.proximaVacuna = new Date(proxima.fecha).toLocaleDateString('es-CL');
-      this.proximaVacunaNombre = proxima.nombre || null;
-
-    } catch (error) {
-      console.log(error);
-      this.proximaVacuna = null;
-      this.proximaVacunaNombre = null;
-    }
-  }
-
-  // ========================
-  // Último sueño
-  // ========================
-  async loadUltimoSueno() {
-    try {
-      const uid = this.user().uid;
-      const path = `users/${uid}/sueno`;
-
-      const data: any[] = await firstValueFrom(
-        this.firebaseSvc.getCollectionData(path)
-      );
-
-      if (!data.length) {
+    this.firebaseSvc.getCollectionData(path).subscribe(registros => {
+      // Aquí tomas el último registro de sueño y calculas lo que ya hacías:
+      // this.ultimoSueno = ...
+      // Ejemplo simplificado:
+      const lista: any[] = registros as any[];
+      if (lista.length) {
+        const ultimo = lista[lista.length - 1];
+        this.ultimoSueno = ultimo.duracion || null;
+      } else {
         this.ultimoSueno = null;
-        return;
       }
-
-      data.sort((a, b) => new Date(b.inicio).getTime() - new Date(a.inicio).getTime());
-
-      const ultimo = data[0];
-      this.ultimoSueno = `${ultimo.duracion} h`;
-
-    } catch (e) {
-      console.log('Error cargando último sueño:', e);
-      this.ultimoSueno = null;
-    }
+    });
   }
 
-  // ========================
-  // Última comida
-  // ========================
-  async loadUltimaComida() {
-    try {
-      const uid = this.user().uid;
-      const path = `users/${uid}/alimentacion`;
+loadResumenVacunas(babyId: string) {
+  const user = this.userData;
+  if (!user) return;
 
-      const data: any[] = await firstValueFrom(
-        this.firebaseSvc.getCollectionData(path)
-      );
+  const path = `users/${user.uid}/babies/${babyId}/vacunas`;
 
-      if (!data.length) {
+  this.firebaseSvc.getCollectionData(path).subscribe({
+    next: (registros: any[]) => {
+      const lista = (registros || []) as any[];
+
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+
+      // 1) Tomamos SOLO las que tengan próxima dosis
+      const proximas = lista
+        .filter(v => !!v.proximaDosis)
+        .map(v => {
+          const fechaMs = new Date(v.proximaDosis).getTime();
+          return { ...v, fechaMs };
+        })
+        // 2) Solo fechas futuras o de hoy
+        .filter(v => !isNaN(v.fechaMs) && v.fechaMs >= hoy.getTime())
+        // 3) Ordenamos por la más cercana
+        .sort((a, b) => a.fechaMs - b.fechaMs);
+
+      if (proximas.length) {
+        const prox = proximas[0];
+        this.proximaVacunaNombre = prox.nombre || null;
+        this.proximaVacuna = new Date(prox.proximaDosis).toLocaleDateString('es-CL');
+      } else {
+        this.proximaVacunaNombre = null;
+        this.proximaVacuna = null;
+      }
+    },
+    error: err => {
+      console.error('Error cargando vacunas:', err);
+      this.proximaVacunaNombre = null;
+      this.proximaVacuna = null;
+    }
+  });
+}
+
+
+  loadResumenControles(babyId: string) {
+    const user = this.userData;
+    const path = `users/${user.uid}/babies/${babyId}/controles`;
+
+    this.firebaseSvc.getCollectionData(path).subscribe(registros => {
+      const lista: any[] = registros as any[];
+
+      // Busca el próximo control
+      if (lista.length) {
+        const prox = lista[0]; // ajusta a tu criterio
+        this.proximoControlNombre = prox.nombre || null;
+        this.proximoControl = prox.fecha || null;
+      } else {
+        this.proximoControlNombre = null;
+        this.proximoControl = null;
+      }
+    });
+  }
+
+  loadResumenAlimentacion(babyId: string) {
+    const user = this.userData;
+    const path = `users/${user.uid}/babies/${babyId}/alimentacion`;
+
+    this.firebaseSvc.getCollectionData(path).subscribe(registros => {
+      const lista: any[] = registros as any[];
+
+      if (lista.length) {
+        const ultima = lista[lista.length - 1];
+        this.ultimaComida = ultima.tipo || null;
+        this.ultimaComidaCantidad = ultima.cantidad || null;
+      } else {
         this.ultimaComida = null;
         this.ultimaComidaCantidad = null;
-        return;
       }
-
-      data.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
-
-      const ultima = data[0];
-      this.ultimaComida = ultima.alimento || null;
-      this.ultimaComidaCantidad = ultima.cantidad || null;
-
-    } catch (e) {
-      console.log('Error cargando última comida:', e);
-      this.ultimaComida = null;
-      this.ultimaComidaCantidad = null;
-    }
+    });
   }
 
-  // ========================
-  // ÚLTIMO CRECIMIENTO
-  // ========================
-  async loadUltimoCrecimiento() {
-    try {
-      const uid = this.user().uid;
-      const path = `users/${uid}/crecimiento`;
+  loadResumenCrecimiento(babyId: string) {
+    const user = this.userData;
+    const path = `users/${user.uid}/babies/${babyId}/crecimiento`;
 
-      const data: any[] = await firstValueFrom(
-        this.firebaseSvc.getCollectionData(path)
-      );
+    this.firebaseSvc.getCollectionData(path).subscribe(registros => {
+      const lista: any[] = registros as any[];
 
-      if (!data.length) {
+      if (lista.length) {
+        const ultimo = lista[lista.length - 1];
+        this.ultimoPeso = ultimo.peso || null;
+        this.ultimaAltura = ultimo.altura || null;
+      } else {
         this.ultimoPeso = null;
         this.ultimaAltura = null;
-        return;
       }
-
-      data.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
-
-      const ultimo = data[0];
-
-      this.ultimoPeso = ultimo.peso || null;
-      this.ultimaAltura = ultimo.altura || null;
-
-    } catch (e) {
-      console.log('Error cargando último crecimiento:', e);
-      this.ultimoPeso = null;
-      this.ultimaAltura = null;
-      
-    }
+    });
   }
 
-  // ========================
-  // Navegar
-  // ========================
-  private readonly router = inject(Router);
+  // Refresher
+  doRefresh(event: any) {
+    this.loadFavoriteBaby();
+    setTimeout(() => event.target.complete(), 800);
+  }
+
+  // Navegaciones
+  addUpdateImage() {
+    this.router.navigate(['/profile']);
+  }
+
+goToSueno() {
+  this.router.navigate(['/main/sueno']);
+}
+
+goToVacunas() {
+  this.router.navigate(['/main/vacunas']);
+}
+
+goToControles() {
+  this.router.navigate(['/main/controles']);
+}
+
+goToPeso() {
+  // página de alimentación
+  this.router.navigate(['/main/alimentacion']);
+}
 
   goToSueno() { this.router.navigate(['/main/sueno']); }
   goToVacunas() { this.router.navigate(['/main/vacunas']); }
@@ -332,4 +265,8 @@ export class HomePage {
   goToCrecimiento() { this.router.navigate(['/main/crecimiento']); }
   goToChatbot() { this.router.navigate(['/main/chatbot']); }
 
+  // Usuario para el template
+  user() {
+    return this.utilsSvc.getFromLocalStorage('user');
+  }
 }

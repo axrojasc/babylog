@@ -24,3 +24,17 @@ ion-content {
   flex-direction: column;
   justify-content: center; 
   }
+
+  .remember-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.remember-wrapper label {
+  font-size: 14px;
+  color: #444;
+  cursor: pointer;
+}
