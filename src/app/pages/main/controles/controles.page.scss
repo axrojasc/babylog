@@ -1,139 +1,142 @@
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+/* ---------------------------
+   CONTENEDOR GENERAL
+----------------------------*/
+.module-page {
+  --background: #f5f8fc;
+  padding: 16px;
 }
 
-h2{
+/* ---------------------------
+   TÍTULOS Y TEXTO
+----------------------------*/
+.module-page h2 {
   text-align: center;
-  color:#ce5585;
-  margin-top: 20px;
+  color: #ce5585;
+  margin-top: 8px;
+  margin-bottom: 4px;
 }
 
-h4{
+.module-page h4 {
   text-align: center;
-  color:#ce5585;
-  margin-top: 20px;
+  color: #ce5585;
+  margin-bottom: 8px;
 }
 
-p{
+.module-page p {
   text-align: center;
   color: #666;
-  margin: 10px 20px;
-  font-size: 16px;
-}
-/* Fondo general */
-.controles-page {
-  --background: #f5f8fc;
-  padding-bottom: 120px; /* espacio para el menú inferior */
+  margin: 8px 12px 16px;
+  font-size: 14px;
 }
 
-/* Searchbar */
-.controles-search {
-  --background: #ffffff;
-  --border-radius: 999px;
-  margin-bottom: 12px;
-}
-
-/* Cards generales */
-.controles-card {
-  border-radius: 15px;
-  border-color: #d1789c 1px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
-}
-
-.controles-card ion-card-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #1f3b57;
-}
-
-/* Diferentes fondos para realizadas / pendientes */
-.realizados-card {
-  background: linear-gradient(135deg, #e3f8ff, #ffffff);
-}
-
-.pendientes-card {
-  background: linear-gradient(135deg, #7c6203, #ffffff);
-}
-
-/* Ítems de controles */
-.control-item {
-  margin-bottom: 6px;
-  border-radius: 14px;
-  --background: rgba(255, 255, 255, 0.85);
-}
-
-.control-item ion-icon {
-  font-size: 1.4rem;
-  color: #64b6ac;
-}
-
-.pendientes-card .control-item ion-icon {
-  color: #f2a23a;
-}
-
-.control-item h2 {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #1f3b57;
-}
-
-.control-item p {
-  margin: 0;
-  font-size: 0.8rem;
-  color: #788493;
-}
-
-/* Texto vacío */
-.empty-text {
+/* Texto vacío ("no hay controles") */
+.module-page .empty {
   text-align: center;
+  color: #999;
   font-size: 0.9rem;
-  color: #788493;
+  margin: 10px 0 4px;
 }
 
-/* Botón guardar del modal */
-.confirm-btn {
-  --border-radius: 999px;
-  --background: #64b6ac;
-  --background-activated: #4a9188;
-  --background-focused: #4a9188;
-  font-weight: 600;
+/* ---------------------------
+   SEARCHBAR & BOTÓN PRINCIPAL
+----------------------------*/
+ion-searchbar {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+ion-button.ion-margin-top {
+  margin-top: 8px !important;
+}
+
+/* ---------------------------
+   GRID DE CONTROLES
+----------------------------*/
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
   margin-top: 16px;
 }
 
-/* FAB flotante (igual patrón que Sueño y Vacunas) */
-.fab-add {
-  position: fixed;
-  bottom: 65px; /* justo arriba del footer */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: #d1789c;
-  color: #64b6ac;
-  border: none;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
+/* Responsive: en móvil, 1 columna */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
 }
 
-.fab-add ion-icon {
-  font-size: 2rem;
+/* Tarjetas contenedoras de cada columna (realizados / pendientes) */
+.grid > div {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 10px 8px 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
-/* Menú inferior como en Sueño/Vacunas */
-.bottom-nav ion-toolbar {
+/* Ajuste de listas dentro de las tarjetas */
+.grid ion-list {
+  background: transparent;
+  margin: 4px 0;
+}
+
+.grid ion-item {
+  --background: transparent;
+  --padding-start: 8px;
+  --inner-padding-end: 0;
+  font-size: 0.9rem;
+}
+
+/* Íconos de acción (editar / eliminar) */
+.grid ion-buttons[slot="end"] ion-button {
+  --padding-start: 4px;
+  --padding-end: 4px;
+}
+
+/* ---------------------------
+   MODAL - FORMULARIO
+----------------------------*/
+ion-modal {
+  --height: auto;
+  --border-radius: 18px;
+}
+
+ion-modal ion-header {
   --background: #ffffff;
-  --border-color: rgba(0,0,0,0.05);
-  box-shadow: 0 -3px 12px rgba(0,0,0,0.12);
-  min-height: 56px;
 }
 
-.bottom-nav ion-button[fill="clear"] {
-  --color: #1f3b57;
+ion-modal ion-title {
+  font-size: 1rem;
+}
+
+/* Validadores */
+.validators {
+  font-size: 0.8rem;
+  color: #e74c3c;
+  margin: 4px 4px 0 4px;
+}
+
+/* Botón guardar/actualizar dentro del formulario */
+ion-modal ion-button[type="submit"] {
+  margin-top: 16px;
+}
+
+/* ---------------------------
+   FOOTER / BOTTOM NAV
+----------------------------*/
+.bottom-nav {
+  ion-toolbar {
+    --background: #ffffff;
+    border-top: 1px solid #e4e4e4;
+    justify-content: space-between;
+  }
+
+  ion-button {
+    --padding-start: 10px;
+    --padding-end: 10px;
+  }
+
+  ion-icon {
+    font-size: 22px;
+  }
 }

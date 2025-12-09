@@ -67,8 +67,9 @@ export class AddBabyPage implements OnInit {
         position: 'middle',
       });
 
-      // Volvemos al perfil
-      this.router.navigate(['/profile']);
+      // 🔙 Volvemos al perfil dentro de /main
+      this.router.navigate(['/main/profile'], { replaceUrl: true });
+
     } catch (error) {
       console.error(error);
       this.utilsSvc.presentToast({
@@ -83,6 +84,7 @@ export class AddBabyPage implements OnInit {
   }
 
   cancel() {
-    this.router.navigate(['/profile']);
+    // También al perfil
+    this.router.navigate(['/main/profile'], { replaceUrl: true });
   }
 }
