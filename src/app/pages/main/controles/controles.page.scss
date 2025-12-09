@@ -93,29 +93,6 @@ ion-button.ion-margin-top {
   --padding-end: 4px;
 }
 
-/* ---------------------------
-   MODAL - FORMULARIO
-----------------------------*/
-ion-modal {
-  --height: auto;
-  --border-radius: 18px;
-}
-
-ion-modal ion-header {
-  --background: #ffffff;
-}
-
-ion-modal ion-title {
-  font-size: 1rem;
-}
-
-/* Validadores */
-.validators {
-  font-size: 0.8rem;
-  color: #e74c3c;
-  margin: 4px 4px 0 4px;
-}
-
 /* Botón guardar/actualizar dentro del formulario */
 ion-modal ion-button[type="submit"] {
   margin-top: 16px;
